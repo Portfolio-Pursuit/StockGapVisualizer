@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Gap Visualizer</title>
+    <style>
+        body {
+            background-color: #f2f2f2;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .google-logo {
+            font-size: 80px;
+            color: #4285f4;
+            margin-top: 150px;
+        }
+        .search-container {
+            margin-top: 30px;
+        }
+        .search-bar {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .search-button {
+            padding: 8px 20px;
+            background-color: #4285f4;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function getCurrentPrice() {
+            var symbol = document.getElementById("symbol").value;
+            var start_date = document.getElementById("start_date");
+            var end_date = document.getElementById("end_date");
+
+            fetch(`/get_current_price?symbol=${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    end_date.value = data.current_price;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <div class="google-logo">GAPE</div>
+    <div class="search-container">
+        <form action="/chart" method="post">
+            <input type="text" class="search-bar" id="symbol" name="symbol" placeholder="Enter stock symbol" required>
+            <input type="date" class="search-bar" id="start_date" name="start_date" required>
+            <input type="date" class="search-bar" id="end_date" name="end_date" required>
+            <button type="button" class="search-button" onclick="getCurrentPrice()">Get Current Price</button>
+            <button type="submit" class="search-button">Generate Chart</button>
+        </form>
+    </div>
+</body>
+</html>
