@@ -23,14 +23,10 @@ def chart():
     end_date = request.form.get('end_date')
 
     stock_info = yf.Ticker(symbol)
-    dividends = stock_info.dividends
+    historical_data = stock_info.history(period="max")
 
-    if not dividends.empty:
-        ipo_date = dividends.index[0].strftime('%Y-%m-%d')
-        if not start_date:
-            start_date = ipo_date
-    else:
-        start_date = "2020-01-01"  # Default start date if IPO date not available
+    if historical_data.empty:
+        start_date = historical_data.index.min().strftime('%Y-%m-%d')
 
     data = yf.download(symbol, start=start_date, end=end_date)
     data['Gap'] = data['Open'] - data['Close'].shift(1)
