@@ -1,6 +1,6 @@
 ```markdown
 # Stock Chart Web Application
-
+```
 This is a simple Flask web application that allows users to visualize 
 stock data using Candlestick and Gap charts. The application uses the 
 Yahoo Finance API (yfinance) to fetch historical stock data and Plotly for 
