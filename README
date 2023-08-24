@@ -1,0 +1,88 @@
+Certainly! Here's a README based on the provided code:
+
+---
+
+# Stock Chart Web Application
+
+This is a simple Flask web application that allows users to visualize 
+stock data using Candlestick and Gap charts. The application uses the 
+Yahoo Finance API (yfinance) to fetch historical stock data and Plotly for 
+chart visualization.
+
+## Features
+
+- **Homepage**: Upon accessing the root URL ("/"), users are presented 
+with the homepage. This can be customized by modifying the `index()` 
+function in the `app.route('/')` decorator.
+
+- **Current Price Endpoint**: The `/get_current_price` route allows users 
+to get the current price of a given stock symbol. This is achieved by 
+sending an AJAX request to this endpoint with the desired stock symbol as 
+a query parameter.
+
+- **Chart Visualization**: Users can submit a form containing a stock 
+symbol and optional start and end dates to visualize a Candlestick chart 
+with Gap lines overlaid. The chart provides insights into the stock's 
+open, high, low, and close prices, as well as gaps between consecutive 
+trading days.
+
+## Prerequisites
+
+- Python 3.x
+- Flask
+- yfinance
+- pandas
+- plotly
+
+## Installation
+
+1. Clone this repository to your local machine:
+
+   ```bash
+   git clone https://github.com/your-username/stock-chart-web-app.git
+   cd stock-chart-web-app
+   ```
+
+2. Create a virtual environment (recommended):
+
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+3. Install the required packages:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Usage
+
+1. Run the Flask application:
+
+   ```bash
+   python app.py
+   ```
+
+2. Open a web browser and navigate to `http://localhost:5000` to access 
+the homepage.
+
+3. To visualize stock data, submit the stock symbol and optional start and 
+end dates in the provided form.
+
+## Credits
+
+- [Flask](https://flask.palletsprojects.com/)
+- [yfinance](https://github.com/ranaroussi/yfinance)
+- [pandas](https://pandas.pydata.org/)
+- [plotly](https://plotly.com/)
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+Remember to replace "your-username" with your actual GitHub username in 
+the repository URL. Also, make sure to create a `requirements.txt` file 
+with the necessary package dependencies for the installation section.
