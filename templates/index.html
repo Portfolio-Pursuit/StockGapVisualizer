@@ -6,19 +6,31 @@
     <title>Stock Gap Visualizer</title>
     <style>
         body {
-            background-color: #282c35; /* Dark background color */
-            color: #ffffff; /* Light text color */
+            background-color: #282c35;
+            color: #ffffff;
             text-align: center;
-            font-family: 'Roboto', sans-serif; /* Google Font */
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
         .title-container {
-            margin-top: 50px;
-            font-family: 'Bungee', cursive; /* Google Font */
+            font-family: 'Bungee', cursive;
             font-size: 48px;
-            color: #f9a825; /* Bright yellow color */
+            color: #f9a825;
+            margin-bottom: 20px;
         }
         .search-container {
-            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
         }
         .search-bar {
             padding: 8px;
@@ -29,25 +41,42 @@
         .search-button {
             padding: 8px 20px;
             margin: 5px;
-            background-color: #f9a825; /* Bright yellow color */
+            background-color: #f9a825;
             border: none;
-            color: #ffffff; /* Light text color */
+            color: #ffffff;
             border-radius: 4px;
             cursor: pointer;
         }
+        .alert {
+            font-size: 18px;
+            color: #e57373;
+            margin-top: 10px;
+        }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet"> <!-- Google Font - Bungee -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet"> <!-- Google Font - Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
     <script>
+        let targetPrice = null;
+
         function getCurrentPrice() {
             var symbol = document.getElementById("symbol").value;
-    
+
             fetch(`/get_current_price?symbol=${symbol}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("current_price").innerText = `Current Price: $${data.current_price}`;
+                    targetPrice = parseFloat(document.getElementById("target_price").value);
+                    checkTargetPrice(data.current_price);
                 })
                 .catch(error => console.error('Error:', error));
+        }
+
+        function checkTargetPrice(currentPrice) {
+            if (targetPrice !== null && !isNaN(targetPrice) && currentPrice >= targetPrice) {
+                document.getElementById("alert_message").innerText = `Alert: Price reached $${targetPrice}!`;
+            } else {
+                document.getElementById("alert_message").innerText = "";
+            }
         }
     </script>
 </head>
@@ -55,11 +84,14 @@
     <div class="title-container">Stock Gap Visualizer</div>
     <div class="search-container">
         <form action="/" method="post">
-            <input type="text" class="search-bar" id="symbol" name="symbol" placeholder="Enter stock symbol" value="{{ symbol }}" required>
-            <br>
-            <button type="button" class="search-button" onclick="getCurrentPrice()">Get Current Price</button>
-            <div id="current_price"></div> <!-- Display the current price here -->
-            <button type="submit" class="search-button">Generate Chart</button>
+            <div class="input-container">
+                <input type="text" class="search-bar" id="symbol" name="symbol" placeholder="Enter stock symbol" value="{{ symbol }}" required>
+                <button type="button" class="search-button" onclick="getCurrentPrice()">Get Current Price</button>
+                <input type="number" class="search-bar" id="target_price" name="target_price" placeholder="Enter target price">
+                <button type="submit" class="search-button">Generate Chart</button>
+            </div>
+            <div id="current_price"></div>
+            <div class="alert" id="alert_message"></div>
         </form>
     </div>
     <div>
