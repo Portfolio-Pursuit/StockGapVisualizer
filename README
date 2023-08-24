@@ -1,6 +1,4 @@
-```markdown
 # Stock Chart Web Application
-```
 This is a simple Flask web application that allows users to visualize 
 stock data using Candlestick and Gap charts. The application uses the 
 Yahoo Finance API (yfinance) to fetch historical stock data and Plotly for 
@@ -77,10 +75,7 @@ end dates in the provided form.
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-```
 
 Make sure to replace "your-username" with your actual GitHub username in 
 the repository URL. Also, create a `requirements.txt` file with the 
 necessary package dependencies mentioned in the "Prerequisites" section.
-
-```
