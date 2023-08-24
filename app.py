@@ -25,6 +25,7 @@ def chart():
         symbol = request.form['symbol']
 
         stock_info = yf.Ticker(symbol)
+        current_price = stock_info.history(period="1d")["Close"][0]
         historical_data = stock_info.history(period="max")
 
         if not historical_data.empty:

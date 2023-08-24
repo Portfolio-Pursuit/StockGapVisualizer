@@ -6,56 +6,59 @@
     <title>Stock Gap Visualizer</title>
     <style>
         body {
-            background-color: #f2f2f2;
+            background-color: #282c35; /* Dark background color */
+            color: #ffffff; /* Light text color */
             text-align: center;
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif; /* Google Font */
         }
-        .google-logo {
-            font-size: 80px;
-            color: #4285f4;
-            margin-top: 50px; /* Adjusted margin for better spacing */
+        .title-container {
+            margin-top: 50px;
+            font-family: 'Bungee', cursive; /* Google Font */
+            font-size: 48px;
+            color: #f9a825; /* Bright yellow color */
         }
         .search-container {
             margin-top: 30px;
         }
         .search-bar {
             padding: 8px;
-            margin: 5px; /* Added margin for spacing between elements */
+            margin: 5px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
         .search-button {
             padding: 8px 20px;
-            margin: 5px; /* Added margin for spacing between elements */
-            background-color: #4285f4;
+            margin: 5px;
+            background-color: #f9a825; /* Bright yellow color */
             border: none;
-            color: white;
+            color: #ffffff; /* Light text color */
             border-radius: 4px;
             cursor: pointer;
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet"> <!-- Google Font - Bungee -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet"> <!-- Google Font - Roboto -->
     <script>
         function getCurrentPrice() {
             var symbol = document.getElementById("symbol").value;
-            var start_date = document.getElementById("start_date");
-            var end_date = document.getElementById("end_date");
-
+    
             fetch(`/get_current_price?symbol=${symbol}`)
                 .then(response => response.json())
                 .then(data => {
-                    end_date.value = data.current_price;
+                    document.getElementById("current_price").innerText = `Current Price: $${data.current_price}`;
                 })
                 .catch(error => console.error('Error:', error));
         }
     </script>
 </head>
 <body>
-    <div class="google-logo">GAPE</div>
+    <div class="title-container">Stock Gap Visualizer</div>
     <div class="search-container">
         <form action="/" method="post">
             <input type="text" class="search-bar" id="symbol" name="symbol" placeholder="Enter stock symbol" value="{{ symbol }}" required>
-            <br> <!-- Line break for better spacing -->
+            <br>
             <button type="button" class="search-button" onclick="getCurrentPrice()">Get Current Price</button>
+            <div id="current_price"></div> <!-- Display the current price here -->
             <button type="submit" class="search-button">Generate Chart</button>
         </form>
     </div>
