@@ -45,7 +45,11 @@ def check_target_price(current_price, target_price):
         print(f"Target price of ${target_price} reached!\nCurrent price: ${current_price}")
         # You could also send an email or notification here if desired
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/')
+def splash():
+    return render_template('splash.html')
+    
+@app.route('/chart', methods=['POST', 'GET'])
 def chart():
     symbol = ""
     chart_html = ""

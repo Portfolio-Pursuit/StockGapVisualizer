@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Gap Visualizer</title>
+    <style>
+        body {
+            background-color: #282c35;
+            color: #ffffff;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .splash-logo {
+            font-family: 'Bungee', cursive;
+            font-size: 64px;
+            color: #f9a825;
+            opacity: 0;
+            animation: fade-in 2s ease-in-out forwards;
+        }
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+                transform: translateY(-100px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .splash-text {
+            font-size: 24px;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fade-in 2s ease-in-out 1s forwards;
+        }
+        .get-started-button {
+            margin-top: 40px;
+            padding: 10px 20px;
+            background-color: #f9a825;
+            border: none;
+            color: #ffffff;
+            font-size: 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0;
+            animation: fade-in 2s ease-in-out 2s forwards;
+        }
+        .splash-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .fade-out {
+            animation: fade-out 2s ease-in-out forwards;
+        }
+        @keyframes fade-out {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100px);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <script>
+        window.onload = function() {
+            var splashContent = document.getElementById('splash-content');
+            splashContent.classList.add('fade-out');
+            setTimeout(function() {
+                window.location.href = '/chart';
+            }, 2000);
+        };
+    </script>
+</head>
+<body>
+    <div id="splash-content" class="splash-content">
+        <div class="splash-logo">Stock Gap Visualizer</div>
+        <div class="splash-text">Visualize Stock Data and Gaps with Ease</div>
+        <div class="get-started-button">Getting Started...</div>
+    </div>
+</body>
+</html>
