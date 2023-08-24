@@ -5,7 +5,7 @@ import plotly.graph_objs as go
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/landing')
 def index():
     return render_template('index.html')
 
@@ -16,29 +16,30 @@ def get_current_price():
     current_price = stock_info.history(period="1d")["Close"][0]
     return jsonify({"current_price": current_price})
 
-@app.route('/chart', methods=['POST'])
+@app.route('/', methods=['POST', 'GET'])
 def chart():
-    symbol = request.form['symbol']
-    start_date = request.form.get('start_date')
-    end_date = request.form.get('end_date')
+    symbol = ""
+    chart_html = ""
+    
+    if request.method == 'POST':
+        symbol = request.form['symbol']
 
-    stock_info = yf.Ticker(symbol)
-    historical_data = stock_info.history(period="max")
+        stock_info = yf.Ticker(symbol)
+        historical_data = stock_info.history(period="max")
 
-    if historical_data.empty:
-        start_date = historical_data.index.min().strftime('%Y-%m-%d')
+        if not historical_data.empty:
+            data = historical_data
+            data['Gap'] = data['Open'] - data['Close'].shift(1)
 
-    data = yf.download(symbol, start=start_date, end=end_date)
-    data['Gap'] = data['Open'] - data['Close'].shift(1)
+            chart = go.Figure(data=[go.Candlestick(x=data.index,
+                                                    open=data['Open'],
+                                                    high=data['High'],
+                                                    low=data['Low'],
+                                                    close=data['Close'])])
+            chart.add_trace(go.Scatter(x=data.index, y=data['Gap'], mode='lines', name='Gap'))
+            chart_html = chart.to_html()
 
-    chart = go.Figure(data=[go.Candlestick(x=data.index,
-                                            open=data['Open'],
-                                            high=data['High'],
-                                            low=data['Low'],
-                                            close=data['Close'])])
-    chart.add_trace(go.Scatter(x=data.index, y=data['Gap'], mode='lines', name='Gap'))
-
-    return chart.to_html()
+    return render_template('index.html', symbol=symbol, chart_html=chart_html)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=8000, debug=True)
