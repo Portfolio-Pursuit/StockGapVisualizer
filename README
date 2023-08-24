@@ -1,7 +1,4 @@
-Certainly! Here's a README based on the provided code:
-
----
-
+```markdown
 # Stock Chart Web Application
 
 This is a simple Flask web application that allows users to visualize 
@@ -80,9 +77,8 @@ end dates in the provided form.
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+```
 
----
-
-Remember to replace "your-username" with your actual GitHub username in 
-the repository URL. Also, make sure to create a `requirements.txt` file 
-with the necessary package dependencies for the installation section.
+Make sure to replace "your-username" with your actual GitHub username in 
+the repository URL. Also, create a `requirements.txt` file with the 
+necessary package dependencies mentioned in the "Prerequisites" section.
