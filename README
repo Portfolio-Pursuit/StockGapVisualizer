@@ -1,81 +1,83 @@
-# Stock Chart Web Application
-This is a simple Flask web application that allows users to visualize 
-stock data using Candlestick and Gap charts. The application uses the 
-Yahoo Finance API (yfinance) to fetch historical stock data and Plotly for 
-chart visualization.
+```markdown
+# Flask Stock Gap Visualizer
+
+The Flask Stock Gap Visualizer is a web application that allows users to 
+visualize stock data and identify gaps between consecutive trading days. 
+The application retrieves historical stock data using the Yahoo Finance 
+API and displays candlestick charts along with a line chart showing the 
+gaps between opening and closing prices.
 
 ## Features
 
-- **Homepage**: Upon accessing the root URL ("/"), users are presented 
-with the homepage. This can be customized by modifying the `index()` 
-function in the `app.route('/')` decorator.
+- Enter a stock symbol to generate a candlestick chart and a gap line 
+chart.
+- View the current price of the selected stock.
+- Set a target price and receive an alert when the stock price reaches or 
+surpasses the target.
+- Zoom in on the graph to analyze specific time ranges.
+- The UI layout is responsive and user-friendly.
 
-- **Current Price Endpoint**: The `/get_current_price` route allows users 
-to get the current price of a given stock symbol. This is achieved by 
-sending an AJAX request to this endpoint with the desired stock symbol as 
-a query parameter.
+## Getting Started
 
-- **Chart Visualization**: Users can submit a form containing a stock 
-symbol and optional start and end dates to visualize a Candlestick chart 
-with Gap lines overlaid. The chart provides insights into the stock's 
-open, high, low, and close prices, as well as gaps between consecutive 
-trading days.
+1. Clone this repository to your local machine.
 
-## Prerequisites
+```bash
+git clone https://github.com/your-username/flask-stock-gap-visualizer.git
+cd flask-stock-gap-visualizer
+```
 
-- Python 3.x
-- Flask
-- yfinance
-- pandas
-- plotly
+2. Install the required dependencies using `pip`.
 
-## Installation
+```bash
+pip install Flask yfinance pandas plotly
+```
 
-1. Clone this repository to your local machine:
+3. Run the Flask app.
 
-   ```bash
-   git clone https://github.com/your-username/stock-chart-web-app.git
-   cd stock-chart-web-app
-   ```
+```bash
+python app.py
+```
 
-2. Create a virtual environment (recommended):
-
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-3. Install the required packages:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
+4. Open your web browser and go to `http://127.0.0.1:8000/` to access the 
+Stock Gap Visualizer.
 
 ## Usage
 
-1. Run the Flask application:
+1. Enter a valid stock symbol (e.g., AAPL, MSFT) in the input field.
+2. Click the "Get Current Price" button to fetch and display the current 
+price of the selected stock.
+3. Enter a target price (optional) to set an alert for reaching the 
+specified price.
+4. Click the "Generate Chart" button to generate the candlestick and gap 
+line charts.
+5. Use the "Zoom In" button to zoom in on the graph and analyze specific 
+time ranges.
+6. The gap line chart displays gaps between consecutive trading days.
 
-   ```bash
-   python app.py
-   ```
+## Contributing
 
-2. Open a web browser and navigate to `http://localhost:5000` to access 
-the homepage.
+Contributions are welcome! If you'd like to contribute to the project, 
+please follow these steps:
 
-3. To visualize stock data, submit the stock symbol and optional start and 
-end dates in the provided form.
-
-## Credits
-
-- [Flask](https://flask.palletsprojects.com/)
-- [yfinance](https://github.com/ranaroussi/yfinance)
-- [pandas](https://pandas.pydata.org/)
-- [plotly](https://plotly.com/)
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and test them locally.
+4. Commit and push your changes to your fork.
+5. Create a pull request to the original repository.
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
 
-Make sure to replace "your-username" with your actual GitHub username in 
-the repository URL. Also, create a `requirements.txt` file with the 
-necessary package dependencies mentioned in the "Prerequisites" section.
+---
+
+**Disclaimer:** This application uses financial data retrieved from Yahoo 
+Finance. The data might not be up to date and accurate. Use this 
+application for educational purposes only and verify data from reliable 
+sources before making financial decisions.
+```
+
+Make sure to replace `your-username` in the repository URL with your 
+actual GitHub username. Also, don't forget to include any additional 
+information or instructions specific to your project that might be 
+relevant.
