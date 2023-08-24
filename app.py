@@ -33,7 +33,7 @@ def generate_chart(symbol):
         chart.update_layout(
             autosize=True,  # Automatically adjust size to container
             margin=dict(l=40, r=20, t=40, b=20),  # Set margin
-            xaxis=dict(rangeslider=dict(visible=False))  # Disable range slider
+            xaxis_rangeslider_visible=True  # Enable range slider
         )
         
         return chart.to_html()
