@@ -31,6 +31,17 @@
         .input-container {
             display: flex;
             align-items: center;
+            margin-bottom: 10px;
+            transition: margin-bottom 0.3s;
+        }
+
+        .input-container:last-child {
+            margin-bottom: 0;
+        }
+
+        .input-container.animated {
+            margin-bottom: 30px; /* Adjust as needed */
+            animation: moveDown 0.3s ease-out;
         }
         .search-bar {
             padding: 8px;
@@ -62,6 +73,35 @@
             width: 100%;
         }
 
+        .description {
+            font-size: 14px;
+            color: #ccc;
+            margin-left: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+
+        .current-price-container {
+            width: 200px; /* Adjust the width as needed */
+        }
+
+        .current-price {
+            width: 100%;
+        }
+
+        @keyframes moveDown {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
@@ -77,10 +117,12 @@
                     document.getElementById("current_price").innerText = `Current Price: $${data.current_price}`;
                     targetPrice = parseFloat(document.getElementById("target_price").value);
                     checkTargetPrice(data.current_price);
+                    // Show the current price container
+                    document.getElementById("current_price_container").classList.remove("hidden");
                 })
                 .catch(error => console.error('Error:', error));
         }
-
+        
         function checkTargetPrice(currentPrice) {
             if (targetPrice !== null && !isNaN(targetPrice) && currentPrice >= targetPrice) {
                 document.getElementById("alert_message").innerText = `Alert: Price reached $${targetPrice}!`;
@@ -88,6 +130,24 @@
                 document.getElementById("alert_message").innerText = "";
             }
         }
+        
+        document.getElementById("generate_button").addEventListener("click", function() {
+            document.getElementById("loading_indicator").classList.remove("hidden");
+            this.disabled = true;
+
+            // Add animation class to other fields
+            const inputContainers = document.querySelectorAll(".input-container");
+            inputContainers.forEach(container => {
+                container.classList.add("animated");
+            });
+
+            // Remove animation class after a delay (adjust as needed)
+            setTimeout(() => {
+                inputContainers.forEach(container => {
+                    container.classList.remove("animated");
+                });
+            }, 300);
+        });
     </script>
 </head>
 <body>
@@ -97,11 +157,21 @@
             <div class="input-container">
                 <input type="text" class="search-bar" id="symbol" name="symbol" placeholder="Enter stock symbol" value="{{ symbol }}" required>
                 <button type="button" class="search-button" onclick="getCurrentPrice()">Get Current Price</button>
-                <input type="number" class="search-bar" id="target_price" name="target_price" placeholder="Enter target price">
-                <button type="submit" class="search-button">Generate Chart</button>
+                <div class="current-price-container input-container hidden" id="current_price_container">
+                    <div class="current-price" id="current_price"></div>
+                </div>
             </div>
-            <div id="current_price"></div>
-            <div class="alert" id="alert_message"></div>
+            <div class="input-container">
+                <input type="number" class="search-bar" id="target_price" name="target_price" placeholder="Enter target price">
+                <div class="description">Enter a target price to receive an alert when it's reached.</div>
+            </div>
+            <div class="input-container">
+                <button type="submit" class="search-button" id="generate_button">Generate Chart</button>
+            </div>
+            <div class="input-container">
+                <div id="loading_indicator" class="hidden">Generating...</div>
+                <div class="alert" id="alert_message"></div>
+            </div>
         </form>
     </div>
     <div class="chart-container">
