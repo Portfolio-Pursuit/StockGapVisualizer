@@ -48,11 +48,12 @@ def check_target_price(current_price, target_price):
 @app.route('/')
 def splash():
     return render_template('splash.html')
-    
+
 @app.route('/chart', methods=['POST', 'GET'])
 def chart():
     symbol = ""
     chart_html = ""
+    current_price = 50
 
     if request.method == 'POST':
         symbol = request.form['symbol']
@@ -66,8 +67,19 @@ def chart():
             check_target_price(current_price, target_price)
 
         chart_html = generate_chart(symbol)
+    else:
+        symbol = 'SPY'
+        stock_info = yf.Ticker(symbol)
+        current_price = stock_info.history(period="1d")["Close"][0]
+        target_price = current_price
 
-    return render_template('index.html', symbol=symbol, chart_html=chart_html)
+        if target_price and target_price != "":
+            target_price = float(target_price)
+            check_target_price(current_price, target_price)
+
+        chart_html = generate_chart(symbol)
+
+    return render_template('index.html', symbol=symbol, chart_html=chart_html, current_price=current_price)
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)

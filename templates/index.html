@@ -6,58 +6,80 @@
     <title>Stock Gap Visualizer</title>
     <style>
         body {
+            margin: 0;
+            padding: 0;
             background-color: #282c35;
             color: #ffffff;
-            text-align: center;
             font-family: 'Roboto', sans-serif;
+        }
+
+        .container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
         }
+
+        .form-section {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
         .title-container {
             font-family: 'Bungee', cursive;
-            font-size: 48px;
+            font-size: 36px;
             color: #f9a825;
             margin-bottom: 20px;
         }
-        .search-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 600px) {
+            .title-container {
+                font-size: 28px;
+            }
+
+            .form-section {
+                width: 90%;
+                padding: 15px;
+            }
         }
+
         .input-container {
             display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            transition: margin-bottom 0.3s;
+            flex-direction: column;
+            align-items: center; /* Center horizontally */
+            margin-bottom: 15px;
         }
 
-        .input-container:last-child {
-            margin-bottom: 0;
-        }
-
-        .input-container.animated {
-            margin-bottom: 30px; /* Adjust as needed */
-            animation: moveDown 0.3s ease-out;
-        }
         .search-bar {
             padding: 8px;
-            margin: 5px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            width: 80px; /* Adjust width as needed */
         }
+        
         .search-button {
             padding: 8px 20px;
-            margin: 5px;
             background-color: #f9a825;
             border: none;
             color: #ffffff;
             border-radius: 4px;
             cursor: pointer;
         }
+
+        .slider-value {
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px; /* Adjust spacing between slider text and description */
+        }
+
         .alert {
             font-size: 18px;
             color: #e57373;
@@ -93,8 +115,8 @@
 
         @keyframes moveDown {
             from {
-                transform: translateY(-10px);
-                opacity: 0;
+                transform: translateY(+10px);
+                opacity: 0.8;
             }
             to {
                 transform: translateY(0);
@@ -106,80 +128,78 @@
     <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
     <script>
-        let targetPrice = null;
-
         function getCurrentPrice() {
             var symbol = document.getElementById("symbol").value;
-
+    
             fetch(`/get_current_price?symbol=${symbol}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("current_price").innerText = `Current Price: $${data.current_price}`;
-                    targetPrice = parseFloat(document.getElementById("target_price").value);
+                    document.getElementById("target_price").max = data.current_price * 10;
+                    document.getElementById("target_price").value = data.current_price; // Set target price as current value
+                    updateSliderValue(data.current_price);
                     checkTargetPrice(data.current_price);
-                    // Show the current price container
                     document.getElementById("current_price_container").classList.remove("hidden");
                 })
                 .catch(error => console.error('Error:', error));
         }
-        
-        function checkTargetPrice(currentPrice) {
-            if (targetPrice !== null && !isNaN(targetPrice) && currentPrice >= targetPrice) {
-                document.getElementById("alert_message").innerText = `Alert: Price reached $${targetPrice}!`;
-            } else {
-                document.getElementById("alert_message").innerText = "";
-            }
+    
+        function updateSliderValue(value) {
+            document.getElementById("slider_value").textContent = value;
         }
-        
+    
         document.getElementById("generate_button").addEventListener("click", function() {
-            document.getElementById("loading_indicator").classList.remove("hidden");
-            this.disabled = true;
+       // Fetch the current price and target price
+        getCurrentPrice();
 
-            // Add animation class to other fields
-            const inputContainers = document.querySelectorAll(".input-container");
-            inputContainers.forEach(container => {
-                container.classList.add("animated");
-            });
+        // Disable the Generate Chart button and show loading indicator
+        document.getElementById("generate_button").disabled = true;
+        document.getElementById("loading_indicator").classList.remove("hidden");
 
-            // Remove animation class after a delay (adjust as needed)
-            setTimeout(() => {
-                inputContainers.forEach(container => {
-                    container.classList.remove("animated");
-                });
-            }, 300);
+        // Add animation class to other fields
+        const inputContainers = document.querySelectorAll(".input-container");
+        inputContainers.forEach(container => {
+            container.classList.add("animated");
         });
-    </script>
+
+        // Remove animation class after a delay (adjust as needed)
+        setTimeout(() => {
+            inputContainers.forEach(container => {
+                container.classList.remove("animated");
+            });
+        }, 500);
+        });
+    </script>    
 </head>
 <body>
-    <div class="title-container">Stock Gap Visualizer</div>
-    <div class="search-container">
-        <form action="/chart" method="post">
-            <div class="input-container">
-                <input type="text" class="search-bar" id="symbol" name="symbol" placeholder="Enter stock symbol" value="{{ symbol }}" required>
-                <button type="button" class="search-button" onclick="getCurrentPrice()">Get Current Price</button>
-                <div class="current-price-container input-container hidden" id="current_price_container">
-                    <div class="current-price" id="current_price"></div>
+    <div class="container">
+        <div class="title-container">Stock Gap Visualizer</div>
+        <div class="form-section">
+            <form action="/chart" method="post">
+                <div class="input-container">
+                    <input type="text" class="search-bar" id="symbol" name="symbol" placeholder="SPY" value="{{ symbol }}" required>
                 </div>
-            </div>
-            <div class="input-container">
-                <input type="number" class="search-bar" id="target_price" name="target_price" placeholder="Enter target price">
-                <div class="description">Enter a target price to receive an alert when it's reached.</div>
-            </div>
-            <div class="input-container">
-                <button type="submit" class="search-button" id="generate_button">Generate Chart</button>
-            </div>
-            <div class="input-container">
-                <div id="loading_indicator" class="hidden">Generating...</div>
-                <div class="alert" id="alert_message"></div>
-            </div>
-        </form>
-    </div>
-    <div class="chart-container">
-        {% if chart_html %}
-            <div class="chart" id="chart-div">
-                {{ chart_html | safe }}
-            </div>
-        {% endif %}
-    </div>    
+                <div class="input-container">
+                    <input type="range" class="slider" id="target_price" name="target_price" min="0" max="{{ current_price * 10 }}" value="{{ current_price }}" oninput="updateSliderValue(this.value)">
+                    <div class="slider-value" id="slider_value">{{ current_price }}</div>
+                    <div class="description">Enter a target price to receive an alert when it's reached.</div>
+                </div>
+                <div class="input-container">
+                    <button type="submit" class="search-button" id="generate_button">Generate Chart</button>
+                </div>
+                <div class="input-container">
+                    <div id="loading_indicator" class="hidden">Generating...</div>
+                    <div class="alert" id="alert_message"></div>
+                </div>
+            </form>
+        </div>
+        <div class="chart-container">
+            {% if chart_html %}
+                <div class="chart" id="chart-div">
+                    {{ chart_html | safe }}
+                </div>
+            {% endif %}
+        </div> 
+    </div>   
 </body>
 </html>
