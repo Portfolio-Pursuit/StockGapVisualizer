@@ -92,26 +92,22 @@ def heatmap():
     heatmap = create_heatmap(heatmap_data)  # Create the heatmap using Plotly
     return render_template('heatmap.html', heatmap=heatmap)
 
-def create_heatmap(heatmap_data):
-    sectors = [sector["sector"] for sector in heatmap_data]
+import plotly.graph_objs as go
 
-    all_symbols = set()
-    symbol_data = {}  # Dictionary to hold symbol data for each sector
+def create_heatmap(heatmap_data):
+    symbol_data = []  # List to hold symbol data for each sector
 
     for sector_info in heatmap_data:
         sector_name = sector_info["sector"]
         sector_stocks = sector_info["stocks"]
 
-        if sector_name not in symbol_data:
-            symbol_data[sector_name] = []
-
         for stock in sector_stocks:
             symbol = stock["symbol"]
             percent_change = stock["percent_change"]
-            symbol_data[sector_name].append({"symbol": symbol, "percent_change": percent_change})
-            all_symbols.add(symbol)
+            symbol_data.append({"symbol": symbol, "sector": sector_name, "percent_change": percent_change})
 
-    symbols = list(all_symbols)
+    # Sort symbol data by percentage change
+    symbol_data.sort(key=lambda x: x["percent_change"])
 
     # Define the custom color scale
     custom_color_scale = [
@@ -119,19 +115,59 @@ def create_heatmap(heatmap_data):
         [0.5, 'rgb(128, 128, 128)'],  # Grey
         [1.0, 'rgb(0, 128, 0)']      # Green
     ]
+    
+    # Calculate marker sizes and gaps
+    marker_sizes = [abs(symbol["percent_change"]) * 20 for symbol in symbol_data]
+    max_marker_size = max(marker_sizes)
+    gap_between_markers = 100  # Adjust the gap as needed
 
-    trace = go.Heatmap(z=[[stock["percent_change"] for stock in symbol_data.get(sector, [])] for sector in sectors],
-                       x=symbols,
-                       y=sectors,
-                       colorscale=custom_color_scale,
-                       zmin=-5, zmax=5)
+    # Calculate x positions for marker centers
+    x_positions = []
+    current_x = 0
+    reset_x = len(heatmap_data)
+    for size in marker_sizes:
+        if (reset_x <= 0):
+            current_x = 0
+            reset_x = len(heatmap_data)
+        x_positions.append(current_x + size / 2)  # Center of each marker
+        current_x += size * (max_marker_size/size) + (gap_between_markers * size/max_marker_size)
+        reset_x -= 1
 
-    heatmap_layout = go.Layout(title="Stock Percent Change Heatmap",
-                               xaxis_title="Stock Symbol",
-                               yaxis_title="Sector")
+    # Create a scatter plot with custom-sized markers and labels
+    trace = go.Scatter(
+        x=x_positions,
+        y=[symbol["sector"] for symbol in symbol_data],  # Use sector names for y values
+        mode="markers+text",
+        marker=dict(
+            size=marker_sizes,
+            color=[symbol["percent_change"] for symbol in symbol_data],
+            colorscale=custom_color_scale,
+            showscale=True,
+            cmin=-5,
+            cmax=5,
+            colorbar=dict(title="Percentage Change")
+        ),
+        text=[symbol["symbol"] for symbol in symbol_data],
+        hovertext=[
+            f"Symbol: {symbol['symbol']}<br>"
+            f"Percentage Change: {symbol['percent_change']:.2f}"
+            for symbol in symbol_data
+        ],  # Set hover text
+        textposition="middle center"  # Position text labels in the middle of markers
+    )
+    
+    heatmap_layout = go.Layout(
+        title="Stock Percent Change Heatmap",
+        showlegend=False,  # Hide the legend
+        xaxis=dict(showline=False, showticklabels=False),  # Hide x axis line and tick labels
+        yaxis=dict(showline=False),  # Show y axis line but hide tick labels
+        autosize=False,  # Disable autosizing
+        width=800,  # Set a fixed width for the plot
+        height=800  # Set a fixed height for the plot
+    )
 
     heatmap_fig = go.Figure(data=[trace], layout=heatmap_layout)
-    heatmap_html = heatmap_fig.to_html(full_html=False, default_height=600)
+    heatmap_html = heatmap_fig.to_html(full_html=False, default_height=800)
 
     return heatmap_html
 
