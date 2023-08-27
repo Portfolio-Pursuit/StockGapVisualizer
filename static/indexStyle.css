@@ -1,0 +1,120 @@
+/* indexStyle.css */
+
+body {
+   margin: 0;
+   padding: 0;
+   background-color: #282c35;
+   color: #ffffff;
+   font-family: 'Roboto', sans-serif;
+}
+
+.container {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   min-height: 100vh;
+}
+
+.form-section {
+   background-color: rgba(255, 255, 255, 0.1);
+   border-radius: 8px;
+   padding: 20px;
+   width: 80%;
+   max-width: 400px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.title-container {
+   font-family: 'Bungee', cursive;
+   font-size: 36px;
+   color: #f9a825;
+   margin-bottom: 20px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 600px) {
+   .title-container {
+       font-size: 28px;
+   }
+
+   .form-section {
+       width: 90%;
+       padding: 15px;
+   }
+}
+
+.input-container {
+   display: flex;
+   flex-direction: column;
+   align-items: center; /* Center horizontally */
+   margin-bottom: 15px;
+}
+
+.search-bar {
+   padding: 8px;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   margin-bottom: 5px;
+   font-size: 14px;
+   width: 80px; /* Adjust width as needed */
+}
+
+.search-button {
+   padding: 8px 20px;
+   background-color: #f9a825;
+   border: none;
+   color: #ffffff;
+   border-radius: 4px;
+   cursor: pointer;
+}
+
+.slider-value {
+   font-size: 14px;
+   text-align: center;
+   margin-top: 10px; /* Adjust spacing between slider text and description */
+}
+
+.alert {
+   font-size: 18px;
+   color: #e57373;
+   margin-top: 10px;
+}
+
+.chart-container {
+   width: 90%; /* Adjust as needed */
+   margin: 20px auto;
+}
+
+.chart {
+   width: 100%;
+}
+
+.description {
+   font-size: 14px;
+   color: #ccc;
+   margin-left: 10px;
+}
+
+.hidden {
+   display: none;
+}
+
+.current-price-container {
+   width: 200px; /* Adjust the width as needed */
+}
+
+.current-price {
+   width: 100%;
+}
+
+@keyframes moveDown {
+   from {
+       transform: translateY(+10px);
+       opacity: 0.8;
+   }
+   to {
+       transform: translateY(0);
+       opacity: 1;
+   }
+}

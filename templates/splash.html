@@ -80,6 +80,15 @@
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='splashStyle.css') }}">
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</head>
+<body>
+    <div id="splash-content" class="splash-content">
+        <div class="splash-logo">Stock Gap Visualizer</div>
+        <div class="splash-text">Visualize Stock Data and Gaps with Ease</div>
+        <div class="get-started-button">Getting Started...</div>
+    </div>
     <script>
         window.onload = function() {
             var splashContent = document.getElementById('splash-content');
@@ -89,12 +98,5 @@
             }, 2000);
         };
     </script>
-</head>
-<body>
-    <div id="splash-content" class="splash-content">
-        <div class="splash-logo">Stock Gap Visualizer</div>
-        <div class="splash-text">Visualize Stock Data and Gaps with Ease</div>
-        <div class="get-started-button">Getting Started...</div>
-    </div>
 </body>
 </html>

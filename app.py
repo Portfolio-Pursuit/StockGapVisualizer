@@ -31,9 +31,9 @@ def generate_chart(symbol):
         chart.add_trace(go.Scatter(x=data.index, y=data['Gap'], mode='lines', name='Gap'))
         
         chart.update_layout(
-            autosize=True,  # Automatically adjust size to container
-            margin=dict(l=40, r=20, t=40, b=20),  # Set margin
-            xaxis_rangeslider_visible=True  # Enable range slider
+            autosize=True,
+            margin=dict(l=40, r=20, t=40, b=20),
+            xaxis_rangeslider_visible=True
         )
         
         return chart.to_html()
