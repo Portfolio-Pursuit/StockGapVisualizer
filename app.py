@@ -5,8 +5,10 @@ import yfinance as yf
 from yfinance import tickers
 import pandas as pd
 import plotly.graph_objs as go
+from flask_caching import Cache
 
 app = Flask(__name__)
+cache = Cache(app, config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': 3600})  # Cache for 1 hour
 
 @app.route('/landing')
 def index():
@@ -84,10 +86,54 @@ def chart():
 
     return render_template('index.html', symbol=symbol, chart_html=chart_html, current_price=current_price)
 
-@app.route('/get_heatmap_data')
-def get_heatmap_data():
+@app.route('/heatmap')
+def heatmap():
     heatmap_data = generate_heatmap_data()
-    return jsonify(heatmap_data)
+    heatmap = create_heatmap(heatmap_data)  # Create the heatmap using Plotly
+    return render_template('heatmap.html', heatmap=heatmap)
+
+def create_heatmap(heatmap_data):
+    sectors = [sector["sector"] for sector in heatmap_data]
+
+    all_symbols = set()
+    symbol_data = {}  # Dictionary to hold symbol data for each sector
+
+    for sector_info in heatmap_data:
+        sector_name = sector_info["sector"]
+        sector_stocks = sector_info["stocks"]
+
+        if sector_name not in symbol_data:
+            symbol_data[sector_name] = []
+
+        for stock in sector_stocks:
+            symbol = stock["symbol"]
+            percent_change = stock["percent_change"]
+            symbol_data[sector_name].append({"symbol": symbol, "percent_change": percent_change})
+            all_symbols.add(symbol)
+
+    symbols = list(all_symbols)
+
+    # Define the custom color scale
+    custom_color_scale = [
+        [0.0, 'rgb(255, 0, 0)'],     # Red
+        [0.5, 'rgb(128, 128, 128)'],  # Grey
+        [1.0, 'rgb(0, 128, 0)']      # Green
+    ]
+
+    trace = go.Heatmap(z=[[stock["percent_change"] for stock in symbol_data.get(sector, [])] for sector in sectors],
+                       x=symbols,
+                       y=sectors,
+                       colorscale=custom_color_scale,
+                       zmin=-5, zmax=5)
+
+    heatmap_layout = go.Layout(title="Stock Percent Change Heatmap",
+                               xaxis_title="Stock Symbol",
+                               yaxis_title="Sector")
+
+    heatmap_fig = go.Figure(data=[trace], layout=heatmap_layout)
+    heatmap_html = heatmap_fig.to_html(full_html=False, default_height=600)
+
+    return heatmap_html
 
 @app.route('/update_heatmap_data')
 def update_heatmap_data():
@@ -97,10 +143,11 @@ def update_heatmap_data():
     updated_heatmap_data = generate_heatmap_data(start_date, end_date)
     return jsonify(updated_heatmap_data)
 
+@cache.cached()
 def generate_heatmap_data(start_date=None, end_date=None):
     # If start_date or end_date is not provided, default to the last 7 days
     if not start_date:
-        start_date = (pd.Timestamp.now() - pd.DateOffset(days=7)).strftime('%Y-%m-%d')
+        start_date = (pd.Timestamp.now() - pd.DateOffset(days=4)).strftime('%Y-%m-%d')
     if not end_date:
         end_date = pd.Timestamp.now().strftime('%Y-%m-%d')
 
@@ -120,7 +167,6 @@ def generate_heatmap_data(start_date=None, end_date=None):
                 "percent_change": get_percent_change(stock["Symbol"], start_date, end_date)
             })
         heatmap_data.append(sector_heatmap)
-    print(heatmap_data)
     return heatmap_data
 
 # List of popular stock tickers
@@ -145,14 +191,13 @@ def get_most_active_stocks(start_date=None, end_date=None, num_stocks=100):
             if "volume" in stock_info and stock_info["volume"] is not None:
                 stock_data.append({
                     "Symbol": ticker,
-                    "Sector": stock_info.get("sector", "Unknown"),  # Get sector information or use "Unknown"
+                    "Sector": stock_info.get("sector", "Other"),  # Get sector information or use "Unknown"
                     "Volume": stock_info["volume"]
                 })
         except Exception as e:
             print("Error for", ticker, e)
 
     most_active_stocks = pd.DataFrame(stock_data)
-    print(most_active_stocks)
     return most_active_stocks
 
 

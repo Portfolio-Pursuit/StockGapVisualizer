@@ -38,14 +38,9 @@
                 </div>
             {% endif %}
         </div> 
-
+        
         <div class="heatmap-container">
-            <div class="heatmap" id="heatmap-div"></div>
-            <label for="start-date">Start Date:</label>
-            <input type="date" id="start-date">
-            <label for="end-date">End Date:</label>
-            <input type="date" id="end-date">
-            <button id="update-heatmap">Update Heatmap</button>
+            <a href="{{ url_for('heatmap') }}" class="heatmap-button">View Heatmap</a>
         </div>
     </div>   
 </body>
