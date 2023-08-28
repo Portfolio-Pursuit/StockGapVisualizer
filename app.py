@@ -124,15 +124,10 @@ def create_heatmap(heatmap_data):
     # Calculate x positions for marker centers
     x_positions = []
     current_x = 0
-    reset_x = len(heatmap_data)
     for size in marker_sizes:
-        if (reset_x <= 0):
-            current_x = 0
-            reset_x = len(heatmap_data)
         x_positions.append(current_x + size / 2)  # Center of each marker
-        current_x += size * (max_marker_size/size) + (gap_between_markers * size/max_marker_size)
-        reset_x -= 1
-
+        current_x += size + gap_between_markers
+        
     # Create a scatter plot with custom-sized markers and labels
     trace = go.Scatter(
         x=x_positions,
