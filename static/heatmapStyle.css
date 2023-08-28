@@ -6,12 +6,6 @@ body {
     margin: 0;
 }
 
-.heatmap-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
 .heatmap {
     width: 100%;
     height: 400px;
@@ -41,6 +35,14 @@ button {
 .chart-container {
     width: 90%; /* Adjust as needed */
     margin: 20px auto;
+ }
+ 
+ .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
  }
  
  .chart {

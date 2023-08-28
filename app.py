@@ -162,7 +162,7 @@ def create_heatmap(heatmap_data):
         xaxis=dict(showline=False, showticklabels=False),  # Hide x axis line and tick labels
         yaxis=dict(showline=False),  # Show y axis line but hide tick labels
         autosize=False,  # Disable autosizing
-        width=800,  # Set a fixed width for the plot
+        width=1200,  # Set a fixed width for the plot
         height=800  # Set a fixed height for the plot
     )
 

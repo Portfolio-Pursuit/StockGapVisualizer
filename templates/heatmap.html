@@ -8,19 +8,21 @@
     <script src="{{ url_for('static', filename='heatmapScripts.js') }}"></script>
 </head>
 <body>
-    <div class="heatmap-container">
-        <div class="chart-container">
-            {% if heatmap %}
-                <div class="chart" id="chart-div">
-                    {{ heatmap | safe }}
-                </div>
-            {% endif %}
-        </div> 
-        <label for="start-date">Start Date:</label>
-        <input type="date" id="start-date">
-        <label for="end-date">End Date:</label>
-        <input type="date" id="end-date">
-        <button id="update-heatmap">Update Heatmap</button>
+    <div class="container">
+        <div class="heatmap-container">
+            <div class="chart-container">
+                {% if heatmap %}
+                    <div class="chart" id="chart-div">
+                        {{ heatmap | safe }}
+                    </div>
+                {% endif %}
+            </div> 
+            <label for="start-date">Start Date:</label>
+            <input type="date" id="start-date">
+            <label for="end-date">End Date:</label>
+            <input type="date" id="end-date">
+            <button id="update-heatmap">Update Heatmap</button>
+        </div>
     </div>
 </body>
 </html>
