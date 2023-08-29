@@ -6,9 +6,13 @@ from yfinance import tickers
 import pandas as pd
 import plotly.graph_objs as go
 from flask_caching import Cache
+import plotly.express as px
+from datetime import datetime
 
 app = Flask(__name__)
 cache = Cache(app, config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': 3600})  # Cache for 1 hour
+
+sp500 = pd.read_html(r'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]['Symbol']
 
 @app.route('/landing')
 def index():
@@ -95,76 +99,23 @@ def heatmap():
 import plotly.graph_objs as go
 
 def create_heatmap(heatmap_data):
-    symbol_data = []  # List to hold symbol data for each sector
+    color_bin = [-1,-0.02,-0.01,0, 0.01, 0.02,1]
 
-    for sector_info in heatmap_data:
-        sector_name = sector_info["sector"]
-        sector_stocks = sector_info["stocks"]
-
-        for stock in sector_stocks:
-            symbol = stock["symbol"]
-            percent_change = stock["percent_change"]
-            symbol_data.append({"symbol": symbol, "sector": sector_name, "percent_change": percent_change})
-
-    # Sort symbol data by percentage change
-    symbol_data.sort(key=lambda x: x["percent_change"])
-
-    # Define the custom color scale
-    custom_color_scale = [
-        [0.0, 'rgb(255, 0, 0)'],     # Red
-        [0.5, 'rgb(128, 128, 128)'],  # Grey
-        [1.0, 'rgb(0, 128, 0)']      # Green
-    ]
-    
-    # Calculate marker sizes and gaps
-    marker_sizes = [abs(symbol["percent_change"]) * 20 for symbol in symbol_data]
-    max_marker_size = max(marker_sizes)
-    gap_between_markers = 100  # Adjust the gap as needed
-
-    # Calculate x positions for marker centers
-    x_positions = []
-    current_x = 0
-    for size in marker_sizes:
-        x_positions.append(current_x + size / 2)  # Center of each marker
-        current_x += size + gap_between_markers
+    heatmap_data['colors'] = pd.cut(heatmap_data['delta'], bins=color_bin, labels=['red','indianred','lightpink','lightgreen','lime','green'])
         
-    # Create a scatter plot with custom-sized markers and labels
-    trace = go.Scatter(
-        x=x_positions,
-        y=[symbol["sector"] for symbol in symbol_data],  # Use sector names for y values
-        mode="markers+text",
-        marker=dict(
-            size=marker_sizes,
-            color=[symbol["percent_change"] for symbol in symbol_data],
-            colorscale=custom_color_scale,
-            showscale=True,
-            cmin=-5,
-            cmax=5,
-            colorbar=dict(title="Percentage Change")
-        ),
-        text=[symbol["symbol"] for symbol in symbol_data],
-        hovertext=[
-            f"Symbol: {symbol['symbol']}<br>"
-            f"Percentage Change: {symbol['percent_change']:.2f}"
-            for symbol in symbol_data
-        ],  # Set hover text
-        textposition="middle center"  # Position text labels in the middle of markers
-    )
+    trace = px.treemap(heatmap_data, path=[px.Constant("all"), 'sector','ticker'], values = 'market_cap', color='colors',
+                 color_discrete_map ={'(?)':'#262931', 'red':'red', 'indianred':'indianred','lightpink':'lightpink', 'lightgreen':'lightgreen','lime':'lime','green':'green'},
+
+                hover_data = {'delta':':.2p'}
+                )
+
+    trace.update_layout(
+        title="Stock Percent Change Heatmap (Treemap)",
+        autosize=False,
+        width=1200,
+        height=800)
     
-    heatmap_layout = go.Layout(
-        title="Stock Percent Change Heatmap",
-        showlegend=False,  # Hide the legend
-        xaxis=dict(showline=False, showticklabels=False),  # Hide x axis line and tick labels
-        yaxis=dict(showline=False),  # Show y axis line but hide tick labels
-        autosize=False,  # Disable autosizing
-        width=1200,  # Set a fixed width for the plot
-        height=800  # Set a fixed height for the plot
-    )
-
-    heatmap_fig = go.Figure(data=[trace], layout=heatmap_layout)
-    heatmap_html = heatmap_fig.to_html(full_html=False, default_height=800)
-
-    return heatmap_html
+    return trace.to_html()
 
 @app.route('/update_heatmap_data')
 def update_heatmap_data():
@@ -172,75 +123,72 @@ def update_heatmap_data():
     end_date = request.args.get("end_date")
 
     updated_heatmap_data = generate_heatmap_data(start_date, end_date)
-    return jsonify(updated_heatmap_data)
+    return jsonify({"heatmap": create_heatmap(updated_heatmap_data)})
 
 @cache.cached()
 def generate_heatmap_data(start_date=None, end_date=None):
+
+    tickers = []
+    deltas = []
+    sectors =[]
+    market_caps = []
+
     # If start_date or end_date is not provided, default to the last 7 days
     if not start_date:
-        start_date = (pd.Timestamp.now() - pd.DateOffset(days=4)).strftime('%Y-%m-%d')
+        start_date = (pd.Timestamp.now() - pd.DateOffset(days=7)).strftime('%Y-%m-%d')
     if not end_date:
         end_date = pd.Timestamp.now().strftime('%Y-%m-%d')
 
-    # Get the list of most active stocks over the last 7 days
-    most_active_stocks = get_most_active_stocks(start_date, end_date, num_stocks=200)
-    # Generate heatmap data for each sector
-    heatmap_data = []
-    for sector in set(most_active_stocks['Sector']):
-        sector_stocks = most_active_stocks[most_active_stocks['Sector'] == sector]
-        sector_heatmap = {
-            "sector": sector,
-            "stocks": []
-        }
-        for _, stock in sector_stocks.iterrows():
-            sector_heatmap["stocks"].append({
-                "symbol": stock["Symbol"],
-                "percent_change": get_percent_change(stock["Symbol"], start_date, end_date)
-            })
-        heatmap_data.append(sector_heatmap)
-    return heatmap_data
+    start_date_dt = datetime.strptime(start_date, '%Y-%m-%d')
+    end_date_dt = datetime.strptime(end_date, '%Y-%m-%d')
 
-# List of popular stock tickers
-popular_tickers = [
-    "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "FB", "NVDA", "AAPL", "JPM", "JNJ",
-    "V", "MA", "UNH", "PG", "HD", "DIS", "BAC", "PYPL", "ADBE", "VZ", "CRM",
-    "TSM", "NFLX", "CMCSA", "PEP", "KO", "INTC", "CSCO", "ABBV", "XOM", "MRK",
-    "CVX", "WMT", "ABT", "NVDA", "PFE", "GOOG", "TMUS", "WFC", "BMY", "BA",
-    "ORCL", "ACN", "COST", "AVGO", "TXN", "AMGN", "NKE", "NEE", "LIN", "DHR",
-    "HON", "PM", "QCOM", "UNP", "TM", "MMM", "GE", "SBUX", "NOW", "TMO", "IBM",
-    "LOW", "C", "VZ", "INTU", "BA", "CAT", "T", "DIS", "MCD", "LMT", "BUD",
-    "JPM", "AMT", "MO", "ABT", "UPS", "USB", "AMD", "MS", "ATVI", "ADP", "DHR",
-    "TXN", "PNC", "PLD", "TGT", "BLK", "MDT", "AAPL", "MSFT", "GOOGL", "SPY"
-]
+    period = (end_date_dt - start_date_dt).days
 
-def get_most_active_stocks(start_date=None, end_date=None, num_stocks=100):
-    stock_data = []
-    for ticker in popular_tickers:
+    for ticker in sp500:
         try:
+            ## create Ticker object
             stock = yf.Ticker(ticker)
-            stock_info = stock.info
-            if "volume" in stock_info and stock_info["volume"] is not None:
-                stock_data.append({
-                    "Symbol": ticker,
-                    "Sector": stock_info.get("sector", "Other"),  # Get sector information or use "Unknown"
-                    "Volume": stock_info["volume"]
-                })
+            tickers.append(ticker)
+
+            ## download info
+            info = stock.info
+
+            ## download sector
+            sector = info['sector'] if 'sector' in info else 'Other'
+            sectors.append(sector)
+
+            ## download daily stock prices for 2 days
+            hist = stock.history(period=(str(period) + "d"), start=start_date, end=end_date)
+
+            ## calculate change in stock price (from a trading day ago)
+            delta = (hist['Close'][max(period-3, 1)]-hist['Close'][0])/hist['Close'][0]
+            deltas.append(delta if delta else 0)
+
+            ## calculate market cap
+            market_cap = info['sharesOutstanding'] * info["previousClose"] if 'sharesOutstanding' in info else 0
+            market_caps.append(market_cap)
+
+            ## add print statement to ensure code is running
+            print(f'downloaded {ticker}')
+
         except Exception as e:
-            print("Error for", ticker, e)
+            tickers.remove(ticker)
+            sectors.remove(sector)
+            print(e)
+        sector = None
+        stock = None
 
-    most_active_stocks = pd.DataFrame(stock_data)
-    return most_active_stocks
-
-
-def get_percent_change(symbol, start_date, end_date):
-    stock = yf.Ticker(symbol)
-    historical_data = stock.history(period="1d", start=start_date, end=end_date)
-    if not historical_data.empty:
-        start_price = historical_data["Close"][0]
-        end_price = historical_data["Close"][-1]
-        percent_change = ((end_price - start_price) / start_price) * 100
-        return percent_change
-    return 0.0
+    data = {'ticker':tickers,
+                  'sector': sectors,
+                  'delta': deltas,
+                  'market_cap': market_caps,
+                  }
+    
+    df = pd.DataFrame.from_dict(data, orient='index')
+    df = df.transpose()
+    
+    return df
+    
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
