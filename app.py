@@ -8,6 +8,11 @@ import plotly.graph_objs as go
 from flask_caching import Cache
 import plotly.express as px
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
+
+# Rest of your code
+
+
 
 app = Flask(__name__)
 cache = Cache(app, config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': 3600})  # Cache for 1 hour
@@ -127,11 +132,7 @@ def update_heatmap_data():
 
 @cache.cached()
 def generate_heatmap_data(start_date=None, end_date=None):
-
-    tickers = []
-    deltas = []
-    sectors =[]
-    market_caps = []
+    data = []
 
     # If start_date or end_date is not provided, default to the last 7 days
     if not start_date:
@@ -144,51 +145,40 @@ def generate_heatmap_data(start_date=None, end_date=None):
 
     period = (end_date_dt - start_date_dt).days
 
-    for ticker in sp500:
+    def process_stock_data(ticker):
         try:
-            ## create Ticker object
             stock = yf.Ticker(ticker)
-            tickers.append(ticker)
-
-            ## download info
             info = stock.info
+            sector = info.get('sector', 'Other')
+            
+            hist = stock.history(period=f"{period}d", start=start_date, end=end_date)
+            if len(hist) >= 2:
+                delta = (hist['Close'].iloc[-1] - hist['Close'].iloc[-2]) / hist['Close'].iloc[-2]
+            else:
+                delta = 0
+            
+            if 'sharesOutstanding' in info and 'previousClose' in info:
+                market_cap = info['sharesOutstanding'] * info['previousClose']
+            else:
+                market_cap = 0
 
-            ## download sector
-            sector = info['sector'] if 'sector' in info else 'Other'
-            sectors.append(sector)
+            data.append({
+                'ticker': ticker,
+                'sector': sector,
+                'delta': delta,
+                'market_cap': market_cap
+            })
 
-            ## download daily stock prices for 2 days
-            hist = stock.history(period=(str(period) + "d"), start=start_date, end=end_date)
-
-            ## calculate change in stock price (from a trading day ago)
-            delta = (hist['Close'][max(period-3, 1)]-hist['Close'][0])/hist['Close'][0]
-            deltas.append(delta if delta else 0)
-
-            ## calculate market cap
-            market_cap = info['sharesOutstanding'] * info["previousClose"] if 'sharesOutstanding' in info else 0
-            market_caps.append(market_cap)
-
-            ## add print statement to ensure code is running
-            print(f'downloaded {ticker}')
-
+            print(f"Downloaded data for {ticker}")
         except Exception as e:
-            tickers.remove(ticker)
-            sectors.remove(sector)
-            print(e)
-        sector = None
-        stock = None
+            print(f"Error for {ticker}: {e}")
 
-    data = {'ticker':tickers,
-                  'sector': sectors,
-                  'delta': deltas,
-                  'market_cap': market_caps,
-                  }
-    
-    df = pd.DataFrame.from_dict(data, orient='index')
-    df = df.transpose()
-    
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        executor.map(process_stock_data, sp500)
+
+    df = pd.DataFrame(data)
     return df
-    
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
+
