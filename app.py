@@ -8,6 +8,7 @@ from flask_caching import Cache
 import plotly.express as px
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # Replace with a strong secret key
@@ -18,6 +19,15 @@ sp500 = pd.read_html(r'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies
 @app.route('/landing')
 def index():
     return render_template('index.html')
+
+# Custom decorator to check if the user is authenticated
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('authenticated'):
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -45,11 +55,8 @@ def logout():
     return redirect('/login')
 
 @app.route('/dashboard')
+@login_required
 def dashboard():
-    # Check if the user is authenticated
-    if not session.get('authenticated'):
-        return redirect('/login')
-
     return render_template('dashboard.html')
 
 @app.route('/get_current_price')
