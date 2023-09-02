@@ -1,18 +1,14 @@
 # app.py
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, url_for
 import yfinance as yf
-from yfinance import tickers
 import pandas as pd
 import plotly.graph_objs as go
 from flask_caching import Cache
 import plotly.express as px
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
-
-# Rest of your code
-
-
+from flask import Response
 
 app = Flask(__name__)
 cache = Cache(app, config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': 3600})  # Cache for 1 hour
@@ -95,13 +91,33 @@ def chart():
 
     return render_template('index.html', symbol=symbol, chart_html=chart_html, current_price=current_price)
 
+heatmap_data = pd.DataFrame()
+
 @app.route('/heatmap')
 def heatmap():
-    heatmap_data = generate_heatmap_data()
+    global heatmap_data
+    startIdx = int(request.args.get('startIdx', 0))  # Get the start index from the query parameters
+    if (len(heatmap_data) == 0 or startIdx == 0):
+        heatmap_data = generate_heatmap_data(startIdx=startIdx, useStartIdx=True)
+    else:
+        heatmap_data = pd.concat([heatmap_data, generate_heatmap_data(startIdx=startIdx, useStartIdx=True)], ignore_index=True) 
     heatmap = create_heatmap(heatmap_data)  # Create the heatmap using Plotly
-    return render_template('heatmap.html', heatmap=heatmap)
 
-import plotly.graph_objs as go
+    # Check if there are more items to load
+    if (startIdx + 25) < len(sp500):
+        # Create a JavaScript timer that calls the `/heatmap` route with the next start index
+        script = f'''
+            <script>
+                setTimeout(function() {{
+                    window.location.href = "/heatmap?startIdx={startIdx + 25}";
+                }}, 100);  // Adjust the interval (in milliseconds) as needed
+            </script>
+        '''
+    else:
+        script = ''
+
+    # Use a Flask Response to send both the heatmap and the JavaScript
+    return Response(heatmap + script, content_type='text/html')
 
 def create_heatmap(heatmap_data):
     color_bin = [-1,-0.02,-0.01,0, 0.01, 0.02,1]
@@ -130,7 +146,7 @@ def update_heatmap_data():
     updated_heatmap_data = generate_heatmap_data(start_date, end_date)
     return jsonify({"heatmap": create_heatmap(updated_heatmap_data)})
 
-def generate_heatmap_data(start_date=None, end_date=None):
+def generate_heatmap_data(start_date=None, end_date=None, startIdx=0, useStartIdx=False):
     tickers = []
     sectors = []
     deltas = []
@@ -177,8 +193,9 @@ def generate_heatmap_data(start_date=None, end_date=None):
         return {'ticker': tickers, 'sector': sectors, 'delta': deltas, 'market_cap': market_caps}
 
     with ThreadPoolExecutor() as executor:
-        for result in executor.map(process_stock_data, sp500):
+        for result in executor.map(process_stock_data, sp500[startIdx:startIdx+25] if useStartIdx else sp500):
             continue
+
     data = result
     df = pd.DataFrame.from_dict(data, orient='index')
     df = df.transpose()
