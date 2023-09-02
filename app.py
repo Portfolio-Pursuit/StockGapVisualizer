@@ -1,6 +1,6 @@
 # app.py
 
-from flask import Flask, render_template, request, jsonify, url_for
+from flask import Flask, redirect, Response, render_template, request, jsonify, url_for, session, abort
 import yfinance as yf
 import pandas as pd
 import plotly.graph_objs as go
@@ -8,9 +8,9 @@ from flask_caching import Cache
 import plotly.express as px
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
-from flask import Response
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'  # Replace with a strong secret key
 cache = Cache(app, config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': 3600})  # Cache for 1 hour
 
 sp500 = pd.read_html(r'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]['Symbol']
@@ -18,6 +18,39 @@ sp500 = pd.read_html(r'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies
 @app.route('/landing')
 def index():
     return render_template('index.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # Handle login logic here (e.g., check credentials)
+        username = request.form['username']
+        password = request.form['password']
+        # Example: Check if the username and password are correct
+        if username == 'your_username' and password == 'your_password':
+            # Store authentication status in the session
+            session['authenticated'] = True
+            return redirect(url_for('dashboard'))
+
+        # Display an error message for an incorrect login
+        error_message = 'Invalid username or password'
+        return render_template('login.html', error_message=error_message)
+
+    # If it's a GET request, render the login form
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    # Clear the authentication status from the session
+    session.pop('authenticated', None)
+    return redirect('/login')
+
+@app.route('/dashboard')
+def dashboard():
+    # Check if the user is authenticated
+    if not session.get('authenticated'):
+        return redirect('/login')
+
+    return render_template('dashboard.html')
 
 @app.route('/get_current_price')
 def get_current_price():

@@ -1,0 +1,23 @@
+<!-- templates/dashboard.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboardStyle.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataDash - Dashboard</title>
+    <!-- Link the dashboard-specific CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboardStyle.css') }}">
+</head>
+<body>
+    <!-- Add your dashboard content here and apply the CSS classes -->
+    <div class="dashboard-container">
+        <h1>Welcome to DataDash Dashboard</h1>
+        <p >Here you can customize and view your data visualizations.</p>
+        <div class="dashboard-content">
+            <!-- Dashboard content goes here -->
+        </div>
+    </div>
+</body>
+</html>
