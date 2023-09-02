@@ -130,9 +130,11 @@ def update_heatmap_data():
     updated_heatmap_data = generate_heatmap_data(start_date, end_date)
     return jsonify({"heatmap": create_heatmap(updated_heatmap_data)})
 
-@cache.cached()
 def generate_heatmap_data(start_date=None, end_date=None):
-    data = []
+    tickers = []
+    sectors = []
+    deltas = []
+    market_caps = []
 
     # If start_date or end_date is not provided, default to the last 7 days
     if not start_date:
@@ -161,22 +163,26 @@ def generate_heatmap_data(start_date=None, end_date=None):
                 market_cap = info['sharesOutstanding'] * info['previousClose']
             else:
                 market_cap = 0
-
-            data.append({
-                'ticker': ticker,
-                'sector': sector,
-                'delta': delta,
-                'market_cap': market_cap
-            })
-
+            
+            tickers.append(ticker)
+            sectors.append(sector)
+            deltas.append(delta)
+            market_caps.append(market_cap)
+           
             print(f"Downloaded data for {ticker}")
         except Exception as e:
             print(f"Error for {ticker}: {e}")
 
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        executor.map(process_stock_data, sp500)
 
-    df = pd.DataFrame(data)
+        return {'ticker': tickers, 'sector': sectors, 'delta': deltas, 'market_cap': market_caps}
+
+    with ThreadPoolExecutor() as executor:
+        for result in executor.map(process_stock_data, sp500):
+            continue
+    data = result
+    df = pd.DataFrame.from_dict(data, orient='index')
+    df = df.transpose()
+
     return df
 
 if __name__ == '__main__':
