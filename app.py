@@ -97,7 +97,12 @@ heatmap_data = pd.DataFrame()
 def heatmap():
     global heatmap_data
     startIdx = int(request.args.get('startIdx', 0))  # Get the start index from the query parameters
-    if (len(heatmap_data) == 0 or startIdx == 0):
+    if (len(heatmap_data) != startIdx):
+        startIdx = 0
+        heatmap_data = generate_heatmap_data(startIdx=startIdx, useStartIdx=True)
+    elif (len(heatmap_data) >= len(sp500)):
+        pass
+    elif (len(heatmap_data) == 0 or startIdx == 0):
         heatmap_data = generate_heatmap_data(startIdx=startIdx, useStartIdx=True)
     else:
         heatmap_data = pd.concat([heatmap_data, generate_heatmap_data(startIdx=startIdx, useStartIdx=True)], ignore_index=True) 
