@@ -1,5 +1,4 @@
-<!-- dashboard.templates.dashboard.html -->
-
+<!-- dashboard/templates/dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,21 +6,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DataDash - Dashboard</title>
-    <!-- Link the dashboard-specific CSS file -->
-    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='dashboardStyle.css') }}">
 </head>
 <body>
-    <!-- Add your dashboard content here and apply the CSS classes -->
     <div class="dashboard-container">
         <h1>Welcome to DataDash Dashboard</h1>
-        <p >Here you can customize and view your data visualizations.</p>
+        <p>Here you can customize and view your data visualizations.</p>
+        
+        <!-- Add spacing between sections -->
+        <div class="spacer"></div>
+        
         <div class="dashboard-content">
-            <!-- Dashboard content goes here -->
+            <!-- Styled buttons for chart and heatmap -->
+            <button onclick="location.href='{{ url_for('chart.chart') }}'" class="chart-button">Go to Chart</button>
+            <button onclick="location.href='{{ url_for('heatmap.heatmap') }}'" class="heatmap-button">Go to Heatmap</button>
         </div>
+        
+        <!-- Add spacing between buttons and the logout section -->
+        <div class="spacer"></div>
+        
         <!-- Logout button -->
         <form action="/logout" method="get">
             <button type="submit" class="logout-button">Logout</button>
         </form>
     </div>
-</body>
-</html>
+</body

@@ -1,6 +1,5 @@
 /* static/dashboardStyle.css */
 
-/* Apply the same global styles as in indexStyle.css */
 body {
     margin: 0;
     padding: 0;
@@ -9,21 +8,13 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-}
-
-/* Apply specific styles for the dashboard page */
 .dashboard-container {
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 20px;
-    width: 80%;
-    max-width: 400px;
+    width: 100%; /* Use the full width of the screen */
+    max-width: 600px; /* Limit the maximum width */
+    margin: 0 auto; /* Center the container horizontally */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
@@ -35,36 +26,30 @@ body {
     margin-bottom: 20px;
 }
 
-/* Responsive adjustments */
-@media screen and (max-width: 600px) {
-    .dashboard-title {
-        font-size: 28px;
-    }
-
-    .dashboard-container {
-        width: 90%;
-        padding: 15px;
-    }
-}
-
-/* Add more specific styles for the dashboard content as needed */
 .dashboard-content {
     /* Add your dashboard content-specific styles here */
 }
 
 /* Add this CSS to your dashboardStyle.css file */
-.logout-button {
-    background-color: #f44336; /* Red color for the button background */
-    color: white; /* White text color */
-    border: none; /* Remove the button border */
-    padding: 10px 20px; /* Add some padding to the button */
-    cursor: pointer; /* Change the cursor to a pointer on hover */
-    border-radius: 5px; /* Add rounded corners to the button */
-    font-size: 16px; /* Font size */
+.logout-button, .chart-button, .heatmap-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin: 5px; /* Add spacing between buttons */
 }
 
-/* Style the button on hover */
-.logout-button:hover {
-    background-color: #d32f2f; /* Darker red color on hover */
+/* Style the buttons on hover */
+.logout-button:hover, .chart-button:hover, .heatmap-button:hover {
+    background-color: #333;
+}
+
+
+/* Style for the spacer */
+.spacer {
+    height: 20px; /* Adjust the height to control the spacing */
 }
 
