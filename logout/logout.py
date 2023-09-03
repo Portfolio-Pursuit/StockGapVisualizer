@@ -1,5 +1,5 @@
 # logout/logout.py
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask import Blueprint, redirect, session
 
 logout_blueprint = Blueprint('logout', __name__,  template_folder='templates',
     static_folder='static', static_url_path='assets')
