@@ -1,12 +1,12 @@
 # dashboard.dashboard.py
-from __future__ import absolute_import
 from flask import render_template, Blueprint
 from common.auth.login_required import login_required
+from .watchlist import watchlist_blueprint
 
-api_blueprints = ['dashboard', 'watchlist']
-
-dashboard_blueprint = Blueprint('dashboard', __name__, url_prefix= '/dashboard', template_folder='templates',
+dashboard_blueprint = Blueprint('dashboard', __name__, template_folder='templates',
     static_folder='static', static_url_path='assets')
+
+dashboard_blueprint.register_blueprint(watchlist_blueprint)
 
 @dashboard_blueprint.route('/')
 @login_required

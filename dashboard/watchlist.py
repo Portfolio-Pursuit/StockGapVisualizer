@@ -1,9 +1,11 @@
 import yfinance as yf
 from common.auth.login_required import login_required
-from .dashboard import dashboard_blueprint 
-from flask import render_template
+from flask import render_template, Blueprint
 
-@dashboard_blueprint.route('/watch')
+watchlist_blueprint = Blueprint('watchlist', __name__, url_prefix= '/watchlist', template_folder='templates',
+    static_folder='static', static_url_path='assets')
+
+@watchlist_blueprint.route('/')
 @login_required
 def dashboard():
     return render_template('watchlist.html')
