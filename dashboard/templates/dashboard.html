@@ -1,14 +1,14 @@
-<!-- templates/dashboard.html -->
+<!-- dashboard.templates.dashboard.html -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='dashboardStyle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='dashboardStyle.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DataDash - Dashboard</title>
     <!-- Link the dashboard-specific CSS file -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='dashboardStyle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='dashboardStyle.css') }}">
 </head>
 <body>
     <!-- Add your dashboard content here and apply the CSS classes -->
@@ -18,6 +18,10 @@
         <div class="dashboard-content">
             <!-- Dashboard content goes here -->
         </div>
+        <!-- Logout button -->
+        <form action="/logout" method="get">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
     </div>
 </body>
 </html>
