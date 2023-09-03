@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='dashboardStyle.css') }}">
+    <link rel="stylesheet" type="text/css" href="styles.css"> <!-- Include your CSS file here -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DataDash - Dashboard</title>
@@ -19,6 +20,12 @@
             <!-- Styled buttons for chart and heatmap -->
             <button onclick="location.href='{{ url_for('chart.chart') }}'" class="chart-button">Go to Chart</button>
             <button onclick="location.href='{{ url_for('heatmap.heatmap') }}'" class="heatmap-button">Go to Heatmap</button>
+            
+            <!-- My Watchlist button -->
+            <button class="watchlist-button" id="myWatchlistButton">
+                <span class="plus-sign">+</span>
+                My Watchlist
+            </button>
         </div>
         
         <!-- Add spacing between buttons and the logout section -->
@@ -29,4 +36,5 @@
             <button type="submit" class="logout-button">Logout</button>
         </form>
     </div>
-</body
+</body>
+</html>

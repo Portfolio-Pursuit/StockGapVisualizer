@@ -1,0 +1,18 @@
+/* styles.css */
+
+/* Style the button */
+.watchlist-button {
+    background-color: #f0f0f0; /* Grey background color */
+    color: #000; /* Black text color */
+    border: none;
+    padding: 10px 20px; /* Adjust padding as needed */
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Style the "+" sign */
+.plus-sign {
+    font-size: 24px;
+    margin-right: 5px; /* Add some spacing between the "+" sign and text */
+}
