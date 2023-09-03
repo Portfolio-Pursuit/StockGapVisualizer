@@ -4,16 +4,19 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from datetime import datetime
 from papertrades.models.papertrades import PaperTrade
 from common.application.application import db
+from common.auth.login_required import login_required
 
 paper_trading_blueprint = Blueprint('paper_trading', __name__,  template_folder='templates',
     static_folder='static', static_url_path='assets')
 
 @paper_trading_blueprint.route('/', methods=['GET'])
+@login_required
 def list_paper_trades():
     paper_trades = PaperTrade.query.all()
     return render_template('papertrades.html', paper_trades=paper_trades)
 
 @paper_trading_blueprint.route('/new', methods=['GET', 'POST'])
+@login_required
 def create_paper_trade():
     if request.method == 'POST':
         asset = request.form['asset']
