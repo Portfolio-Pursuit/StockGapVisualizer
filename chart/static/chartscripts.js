@@ -1,4 +1,5 @@
-/* scripts.js */
+/* chart.static.chartscripts.js */
+
 document.addEventListener("DOMContentLoaded", function() {
     getCurrentPrice();
 });

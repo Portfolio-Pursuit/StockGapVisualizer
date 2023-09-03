@@ -1,4 +1,4 @@
-# common.models.papertrades.papertrades.py
+# papertrades.models.papertrades.py
 
 from datetime import datetime
 from common.application.application import db

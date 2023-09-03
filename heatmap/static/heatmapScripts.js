@@ -1,4 +1,4 @@
-/* heatmapScripts.js */
+/* heatmap.static.heatmapScripts.js */
 
 document.addEventListener("DOMContentLoaded", function() {
     // Event listener for the "Update Heatmap" button

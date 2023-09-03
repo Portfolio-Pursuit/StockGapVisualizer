@@ -1,3 +1,5 @@
+# common.application.cacheconfig.py
+
 from flask_caching import Cache
 from common.application.application import app
 

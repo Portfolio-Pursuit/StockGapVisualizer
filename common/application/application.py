@@ -1,3 +1,5 @@
+# papertrades.models.papertrades.py
+
 from flask import Flask
 from common.application.config import Config
 from flask_sqlalchemy import SQLAlchemy

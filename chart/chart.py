@@ -1,4 +1,4 @@
-# chart.py
+# chart.chart.py
 from flask import Blueprint, render_template, request, jsonify
 import yfinance as yf
 import plotly.graph_objs as go

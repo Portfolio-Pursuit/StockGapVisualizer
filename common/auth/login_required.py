@@ -1,3 +1,5 @@
+# common.auth.login_required.py
+
 from flask import session, redirect, url_for
 from functools import wraps
 
