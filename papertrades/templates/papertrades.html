@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Trades</title>
+</head>
+<body>
+    <h1>Paper Trades</h1>
+    <ul>
+        {% for trade in paper_trades %}
+            <li>
+                Trade ID: {{ trade.id }}<br>
+                Asset: {{ trade.asset }}<br>
+                Direction: {{ trade.direction }}<br>
+                Quantity: {{ trade.quantity }}<br>
+                Entry Price: ${{ trade.entry_price }}<br>
+                Timestamp: {{ trade.timestamp }}<br>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('paper_trading.create_paper_trade') }}">Create New Paper Trade</a>
+</body>
+</html>
