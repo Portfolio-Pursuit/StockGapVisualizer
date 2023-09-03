@@ -1,3 +1,5 @@
+# dashboard.watchlist.py
+
 import yfinance as yf
 from common.auth.login_required import login_required
 from flask import render_template, Blueprint
