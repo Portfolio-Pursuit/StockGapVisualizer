@@ -25,34 +25,30 @@ def list_paper_trades():
     current_stock_data = addStockData(paper_trades)
     return renderEnv.get_template(local_template).render(paper_trades=paper_trades, current_stock_data=current_stock_data, sp500_symbols=get_sp500_symbols())
 
-@paper_trading_blueprint.route('/new', methods=['GET', 'POST'])
+@paper_trading_blueprint.route('/new', methods=['POST'])
 @login_required
 def create_paper_trade():
     if request.method == 'POST':
-        asset = request.form['asset']
-        direction = request.form['direction']
-        quantity = int(request.form['quantity'])
-        entry_price = float(request.form['entry_price'])
-        
-        # Calculate some trade-related values (e.g., timestamp)
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        
+        asset = request.json.get('asset')
+        direction = request.json.get('direction')
+        quantity = request.json.get('quantity')
+        entry_price = request.json.get('entryPrice')
+
         # Create a new PaperTrade object
         paper_trade = PaperTrade(
             asset=asset,
             direction=direction,
             quantity=quantity,
             entry_price=entry_price,
-            timestamp=timestamp,
+            timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         )
-        
+
         # Add the paper trade to the database
         db.session.add(paper_trade)
         db.session.commit()
-        
-        return redirect(url_for('paper_trading.list_paper_trades'))
-    
-    return render_template('create_paper_trades.html', sp500_symbols=get_sp500_symbols())
+
+        # Return the newly created paper trade data in JSON format
+        return jsonify({'tradeId': paper_trade.id, 'timestamp': paper_trade.timestamp})
 
 @paper_trading_blueprint.route('/remove/<int:trade_id>', methods=['POST'])
 @login_required
@@ -62,6 +58,52 @@ def remove_paper_trade(trade_id):
     db.session.commit()
     flash('Paper trade removed successfully', 'success')
     return jsonify({'message': 'Paper trade removed successfully'})
+
+@paper_trading_blueprint.route('/get_stock_data/<int:trade_id>', methods=['GET'])
+@login_required
+def get_stock_data_for_trade(trade_id):
+    # Get the PaperTrade object by trade_id
+    paper_trade = PaperTrade.query.get_or_404(trade_id)
+
+    # Get the asset symbol for the trade
+    asset = paper_trade.asset
+
+    # Define a dictionary to hold the stock data
+    stock_data = {
+        'current_price': 'Unknown',
+        'gain_loss': 'Unknown',
+        'price_change': 'Unknown',
+        'cost_basis': 'Unknown',
+        'market_value': 'Unknown',
+    }
+
+    try:
+        # Fetch the current price for the asset
+        stock_info = yf.Ticker(asset)
+        current_price = stock_info.history(period="1d")["Close"].iloc[0]
+
+        if not current_price:
+            raise Exception("Current price not available")
+
+        current_price = round(current_price, 2)
+        stock_data['current_price'] = locale.currency(current_price, grouping=True)
+
+        # Calculate gain/loss, price change, cost basis, and market value
+        cost_basis = paper_trade.entry_price * paper_trade.quantity
+        market_value = current_price * paper_trade.quantity
+        price_change = current_price - paper_trade.entry_price
+        is_buy = paper_trade.direction == "buy"
+        gain_loss = (1 if is_buy else -1) * (market_value - cost_basis)
+
+        stock_data['gain_loss'] = locale.currency(gain_loss, grouping=True)
+        stock_data['price_change'] = locale.currency(price_change, grouping=True)
+        stock_data['cost_basis'] = locale.currency(cost_basis, grouping=True)
+        stock_data['market_value'] = locale.currency(market_value, grouping=True)
+
+    except Exception as e:
+        print(f"Error fetching stock data for {asset}: {str(e)}")
+
+    return jsonify(stock_data)
 
 def addStockData(paper_trades):
     paper_trades_to_stock_data = {}

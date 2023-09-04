@@ -16,20 +16,18 @@
 <body>
     <div class="container">
         <h1>Create Paper Trade</h1>
-        <form method="POST" action="{{ url_for('paper_trading.create_paper_trade') }}"> 
-            <label for="asset">Asset:</label>
-            <input type="text" id="asset" name="asset" required>
-            <label for="direction">Direction:</label>
-            <select id="direction" name="direction" required>
-                <option value="buy">Buy</option>
-                <option value="sell">Sell</option>
-            </select>
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" required>
-            <label for="entry_price">Entry Price ($):</label>
-            <input type="number" id="entry_price" name="entry_price" step="0.01" required>
-            <button type="submit" class="submit-button">Create Trade</button>
-        </form>
+        <label for="asset">Asset:</label>
+        <input type="text" id="asset" name="asset" required>
+        <label for="direction">Direction:</label>
+        <select id="direction" name="direction" required>
+            <option value="buy">Buy</option>
+            <option value="sell">Sell</option>
+        </select>
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required>
+        <label for="entry_price">Entry Price ($):</label>
+        <input type="number" id="entry_price" name="entry_price" step="0.01" required>
+        <button type="submit" class="submit-button" onclick="createPaperTrade()">Create Trade</button>
     </div>
 
      <!-- Include jQuery and jQuery UI scripts before your custom JavaScript -->

@@ -53,3 +53,84 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
+
+function createPaperTrade() {
+    // Get form values
+    const asset = document.getElementById('asset').value;
+    const direction = document.getElementById('direction').value;
+    const quantity = document.getElementById('quantity').value;
+    const entryPrice = document.getElementById('entry_price').value;
+
+    // Make an AJAX request to the create_paper_trade endpoint
+    fetch('/papertrading/new', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            asset,
+            direction,
+            quantity,
+            entryPrice,
+        }),
+    })
+    .then(response => {
+        if (response.status === 200) {
+            return response.json();
+        } else {
+            console.error('Failed to create paper trade');
+            throw new Error('Failed to create paper trade');
+        }
+    })
+    .then(data => {
+        // Update the table with the new paper trade data
+        const tableBody = document.querySelector('.papertrades-table tbody');
+        const newRow = document.createElement('tr');
+        newRow.className = 'papertrade-data-row';
+        newRow.id = `papertrade-data-row-${data.tradeId}`;
+        newRow.innerHTML = `
+            <td>${data.tradeId}</td>
+            <td>${asset}</td>
+            <td>${direction}</td>
+            <td>${quantity}</td>
+            <td>$${entryPrice}</td>
+            <td>${data.timestamp}</td>
+            <td id="price-change-${data.tradeId}">Unknown</td>
+            <td id="market-value-${data.tradeId}">Unknown</td>
+            <td id="cost-basis-${data.tradeId}">Unknown</td>
+            <td id="gain-loss-${data.tradeId}">Unknown</td>
+            <td id="current-price-${data.tradeId}">Unknown</td>
+            <td>
+                <button type="button" class="remove-button" onclick="removePaperTrade(${data.tradeId})">X</button>
+            </td>
+        `;
+        tableBody.appendChild(newRow);
+
+        // Clear the form inputs
+        document.getElementById('asset').value = '';
+        document.getElementById('direction').value = 'buy';
+        document.getElementById('quantity').value = '';
+        document.getElementById('entry_price').value = '';
+
+        updateStockDataForTrade(data.tradeId); // Fetch updated stock data for the trade
+    })
+    .catch(error => {
+        console.error('Error while creating paper trade', error);
+    });
+}
+
+function updateStockDataForTrade(tradeId) {
+    // Make an AJAX request to get updated stock data for the trade
+    fetch(`/papertrading/get_stock_data/${tradeId}`)
+        .then(response => response.json())
+        .then(data => {
+             // Update the current_stock_data object in the HTML template with the fetched data
+             currentPriceElem = document.getElementById(`current-price-${tradeId}`);
+             document.getElementById(`current-price-${tradeId}`).textContent = data.current_price;
+             document.getElementById(`price-change-${tradeId}`).textContent = data.price_change;
+             document.getElementById(`market-value-${tradeId}`).textContent = data.market_value;
+             document.getElementById(`cost-basis-${tradeId}`).textContent = data.cost_basis;
+             document.getElementById(`gain-loss-${tradeId}`).textContent = data.gain_loss;
+        })
+        .catch(error => console.error('Error:', error));
+}

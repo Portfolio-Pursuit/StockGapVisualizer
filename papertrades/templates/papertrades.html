@@ -41,11 +41,11 @@
                             <td>{{ trade.quantity }}</td>
                             <td>${{ trade.entry_price }}</td>
                             <td>{{ trade.timestamp }}</td>
-                            <td>{{ current_stock_data[trade.id]['price_change'] }}</td>
-                            <td>{{ current_stock_data[trade.id]['market_value'] }}</td>
-                            <td>{{ current_stock_data[trade.id]['cost_basis'] }}</td>
-                            <td>{{ current_stock_data[trade.id]['gain_loss'] }}</td>
-                            <td>{{ current_stock_data[trade.id]['current_price'] }}</td>
+                            <td id="price-change-{{ trade.id }}">{{ current_stock_data[trade.id]['price_change'] }}</td>
+                            <td id="market-value-{{ trade.id }}">{{ current_stock_data[trade.id]['market_value'] }}</td>
+                            <td id="cost-basis-{{ trade.id }}">{{ current_stock_data[trade.id]['cost_basis'] }}</td>
+                            <td id="gain-loss-{{ trade.id }}">{{ current_stock_data[trade.id]['gain_loss'] }}</td>
+                            <td id="current-price-{{ trade.id }}">{{ current_stock_data[trade.id]['current_price'] }}</td>
                             <td>
                                 <button type="button" class="remove-button" onclick="removePaperTrade({{ trade.id }})">X</button>
                             </td>
