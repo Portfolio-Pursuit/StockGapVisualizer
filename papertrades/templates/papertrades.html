@@ -34,7 +34,7 @@
                 </thead>
                 <tbody>
                     {% for trade in paper_trades %}
-                        <tr class="papertrade-data-row">
+                        <tr class="papertrade-data-row" id="papertrade-data-row-{{ trade.id }}">
                             <td>{{ trade.id }}</td>
                             <td>{{ trade.asset }}</td>
                             <td>{{ trade.direction }}</td>
@@ -47,9 +47,7 @@
                             <td>{{ current_stock_data[trade.id]['gain_loss'] }}</td>
                             <td>{{ current_stock_data[trade.id]['current_price'] }}</td>
                             <td>
-                                <form method="POST" action="{{ url_for('paper_trading.remove_paper_trade', trade_id=trade.id) }}">
-                                    <button type="submit" class="remove-button">X</button>
-                                </form>
+                                <button type="button" class="remove-button" onclick="removePaperTrade({{ trade.id }})">X</button>
                             </td>
                         </tr>
                     {% endfor %}

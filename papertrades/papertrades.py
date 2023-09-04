@@ -1,6 +1,6 @@
 # papertrades.papertrades.py
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from datetime import datetime
 from papertrades.models.papertrades import PaperTrade
 from common.application.application import db
@@ -61,7 +61,7 @@ def remove_paper_trade(trade_id):
     db.session.delete(paper_trade)
     db.session.commit()
     flash('Paper trade removed successfully', 'success')
-    return redirect(url_for('paper_trading.list_paper_trades'))
+    return jsonify({'message': 'Paper trade removed successfully'})
 
 def addStockData(paper_trades):
     paper_trades_to_stock_data = {}

@@ -15,3 +15,27 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+
+function removePaperTrade(tradeId) {
+    // Make an AJAX request to the remove_paper_trade endpoint
+    fetch(`/papertrading/remove/${tradeId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (response.status === 200) {
+            // If the removal was successful, remove the row from the table
+            const rowToRemove = document.getElementById(`papertrade-data-row-${tradeId}`);
+            if (rowToRemove) {
+                rowToRemove.remove();
+            }
+        } else {
+            console.error('Failed to remove paper trade');
+        }
+    })
+    .catch(error => {
+        console.error('Error while removing paper trade', error);
+    });
+}
