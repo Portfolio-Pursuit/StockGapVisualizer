@@ -7,22 +7,9 @@ from common.auth.login_required import login_required
 import plotly.express as px
 import yfinance as yf
 from common.market.data.stocks import get_sp500_symbols
-import os
-from jinja2 import ChoiceLoader, FileSystemLoader, Environment
+from common.ui.navbar import navbar, getUIDir
 
-full_path = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
-common_ui_folder = os.path.join(full_path, 'common', 'ui', 'templates')
-local_ui_folder = os.path.join(full_path, 'heatmap', 'templates')
-
-loader = ChoiceLoader(
-    [
-        FileSystemLoader(local_ui_folder),  # Your project-specific templates
-        FileSystemLoader(common_ui_folder),  # Common templates
-    ]
-)
-
-jinja2_env = Environment(loader=loader)
-jinja2_env.globals['url_for'] = url_for 
+renderEnv = navbar(getUIDir(__file__)).getEnv()
 
 local_template = 'heatmap.html'
 heatmap_blueprint = Blueprint('heatmap', __name__)
@@ -60,12 +47,10 @@ def heatmap():
     else:
         script = ''
 
-    rendered_heatmap = jinja2_env.get_template(local_template).render(heatmap=heatmap, script=script)
+    rendered_heatmap = renderEnv.get_template(local_template).render(heatmap=heatmap, script=script)
 
     # Use a Flask Response to send both the heatmap and the JavaScript
     return Response(rendered_heatmap, content_type='text/html')
-
-    #return Response(heatmap + script, content_type='text/html')
 
 def create_heatmap(heatmap_data):
     color_bin = [-1,-0.02,-0.01,0, 0.01, 0.02,1]

@@ -3,21 +3,9 @@
 import yfinance as yf
 from common.auth.login_required import login_required
 from flask import render_template, Blueprint
-import os
-from jinja2 import ChoiceLoader, FileSystemLoader, Environment
+from common.ui.navbar import navbar, getUIDir
 
-full_path = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
-common_ui_folder = os.path.join(full_path, 'common', 'ui', 'templates')
-local_ui_folder = os.path.join(full_path, 'dashboard', 'templates')
-
-loader = ChoiceLoader(
-    [
-        FileSystemLoader(local_ui_folder),  # Your project-specific templates
-        FileSystemLoader(common_ui_folder),  # Common templates
-    ]
-)
-
-jinja2_env = Environment(loader=loader)
+renderEnv = navbar(getUIDir(__file__)).getEnv()
 
 watchlist_blueprint = Blueprint('watchlist', __name__, url_prefix= '/watchlist', static_folder='static', static_url_path='assets')
 # TODO: figure out structure but Tola likes this
@@ -28,7 +16,7 @@ local_template = 'watchlist.html'
 @watchlist_blueprint.route('/')
 @login_required
 def watchlist():
-    return jinja2_env.get_template(local_template).render()
+    return renderEnv.get_template(local_template).render()
 
 class WatchlistItem:
     def __init__(self, ticker):
