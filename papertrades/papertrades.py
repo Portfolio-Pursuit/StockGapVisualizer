@@ -77,12 +77,12 @@ def addStockData(paper_trades):
     for ticker in tickersToPriceMap.keys():
         try:
             stock_info = yf.Ticker(ticker)
-            current_price = stock_info.history(period="1d")["Close"][0]
+            current_price = stock_info.history(period="1d")["Close"].iloc[0]
             if current_price != 'Unknown':
                 current_price = round(current_price, 2)
                 tickersToPriceMap[ticker]['current_price'] = current_price
         except:
-            print("Error getting stock info for: " + ticker)
+            pass
     for trade in paper_trades:
         current_price = tickersToPriceMap[trade.asset]['current_price']
         if current_price != 'Unknown':
@@ -91,7 +91,6 @@ def addStockData(paper_trades):
             price_change = current_price - trade.entry_price
             isBuy = trade.direction == "buy"
             gain_loss = (1 if isBuy else -1) * (market_value - cost_basis)
-            print(locale.currency(gain_loss))
             paper_trades_to_stock_data[trade.id] = {
                 'current_price': locale.currency(current_price, grouping=True),
                 'gain_loss': locale.currency(gain_loss, grouping=True), 
@@ -99,5 +98,4 @@ def addStockData(paper_trades):
                 'cost_basis': locale.currency(cost_basis, grouping=True), 
                 'market_value': locale.currency(market_value, grouping=True), 
             }
-    print(paper_trades_to_stock_data)
     return paper_trades_to_stock_data
