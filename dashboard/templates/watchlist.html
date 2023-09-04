@@ -1,1 +1,48 @@
-<!-- dashboard.templates.watchlist.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watchlist</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to your custom stylesheet, if any -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.plot.ly/plotly-2.0.0.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Data Dash</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/chart">Chart</a> <!-- Add a button for Chart -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/papertrading">Paper Trades</a> <!-- Add a button for Paper Trades -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/chart">Chart</a> <!-- Add a button for Chart -->
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/heatmap">Heatmap</a> <!-- Add a button for Paper Trades -->
+                </li>
+                <!-- The Watchlist button is removed on the Watchlist page -->
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <!-- Watchlist content goes here -->
+        <h2>My Watchlist</h2>
+        <!-- You can add a table or other elements to display watchlist information here -->
+    </div>
+
+    <!-- Bootstrap JS and other scripts go here, if needed -->
+
+</body>
+</html>
