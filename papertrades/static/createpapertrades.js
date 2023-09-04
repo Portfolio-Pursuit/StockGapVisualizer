@@ -14,12 +14,24 @@ document.addEventListener("DOMContentLoaded", function() {
                 $(this).val(ui.item.label);
 
                 var selectedAsset = ui.item.label;
-                getStockPrice(selectedAsset, function(stockPrice) {
-                    // Update the entry_price input field with the stock price
-                    $("#entry_price").val(stockPrice);
-                });
+                updateUIForStockPrice(selectedAsset);
             }
         });
+
+        function updateUIForStockPrice(selectedAsset) {
+            getStockPrice(selectedAsset, function(stockPrice) {
+                // Check if stockPrice is a valid number
+                if (!isNaN(parseFloat(stockPrice)) && isFinite(stockPrice)) {
+                    // Update the entry_price input field with the valid number
+                    $("#entry_price").prop("type", "number"); // Change the input type to number
+                    $("#entry_price").val(parseFloat(stockPrice));
+                } else {
+                    // Set the input type to text and display 'Unknown' in the entry_price input field
+                    $("#entry_price").prop("type", "text");
+                    $("#entry_price").val('Unknown');
+                }
+            });
+        }
 
         function getStockPrice(asset, callback) {
             var stockPrice = 0;
@@ -34,5 +46,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         $("#entry_price").val("");
+
+        $("#asset").on("change", function() {
+            var selectedAsset = $(this).val();
+            updateUIForStockPrice(selectedAsset);
+        });
     });
 });
