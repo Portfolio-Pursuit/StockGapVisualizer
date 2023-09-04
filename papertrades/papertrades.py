@@ -9,6 +9,7 @@ import yfinance as yf
 import locale
 from common.market.data.stocks import get_sp500_symbols
 from common.ui.navbar import navbar, getUIDir
+from flask_login import current_user
 
 renderEnv = navbar(getUIDir(__file__)).getEnv()
 
@@ -21,7 +22,7 @@ locale.setlocale( locale.LC_ALL, '' )
 @paper_trading_blueprint.route('/', methods=['GET'])
 @login_required
 def list_paper_trades():
-    paper_trades = PaperTrade.query.all()
+    paper_trades = PaperTrade.query.filter_by(user_id=current_user.id).all()
     current_stock_data = addStockData(paper_trades)
     return renderEnv.get_template(local_template).render(paper_trades=paper_trades, current_stock_data=current_stock_data, sp500_symbols=get_sp500_symbols())
 
@@ -34,8 +35,8 @@ def create_paper_trade():
         quantity = request.json.get('quantity')
         entry_price = request.json.get('entryPrice')
 
-        # Create a new PaperTrade object
         paper_trade = PaperTrade(
+            user_id=current_user.id,
             asset=asset,
             direction=direction,
             quantity=quantity,

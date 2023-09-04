@@ -1,0 +1,24 @@
+<!-- login.templates.register.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('login.static', filename='registerstyle.css') }}">
+    <!-- Include jQuery and jQuery UI scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+    <div class="popup">
+        <h1>Register</h1>
+        <form id="register-form">
+            <label for="reg-username">Username:</label>
+            <input type="text" id="reg-username" name="username" required>
+            <label for="reg-password">Password:</label>
+            <input type="password" id="reg-password" name="password" required>
+            <button type="submit" class="submit-button">Register</button>
+        </form>
+        <div id="register-error" class="error-message"></div>
+    </div>
+</body>
+</html>

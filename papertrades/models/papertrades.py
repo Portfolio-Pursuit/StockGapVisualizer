@@ -7,6 +7,8 @@ from time import time
 
 class PaperTrade(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', back_populates='paper_trades')
     asset = db.Column(db.String(50), nullable=False)
     direction = db.Column(db.String(10), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)

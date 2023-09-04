@@ -3,6 +3,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('login.static', filename='loginscripts.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('login.static', filename='loginStyle.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,5 +22,16 @@
     {% if error_message %}
         <div class="error-message">{{ error_message }}</div>
     {% endif %}
+
+    <!-- Add a "Register" button -->
+    <button id="show-registration">Register</button>
+    
+    <!-- The popup form -->
+    <div class="popup-container" id="popupContainer">
+        <div class="popup">
+            <!-- Include your create_paper_trades.html content here -->
+            {% include 'register.html' %}
+        </div>
+    </div>  
 </body>
 </html>

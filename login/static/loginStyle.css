@@ -80,3 +80,17 @@ input[type="submit"] {
     color: #e57373;
     margin-top: 10px;
 }
+
+#show-registration {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#show-registration:hover {
+    background-color: #0056b3;
+}
