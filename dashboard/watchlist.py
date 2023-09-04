@@ -7,6 +7,11 @@ from flask import render_template, Blueprint
 watchlist_blueprint = Blueprint('watchlist', __name__, url_prefix= '/watchlist', template_folder='templates',
     static_folder='static', static_url_path='assets')
 
+# TODO: figure out structure but Tola likes this
+watchlist_blueprint_temp = Blueprint('watchlist', __name__, template_folder='templates',
+    static_folder='static', static_url_path='assets')
+
+@watchlist_blueprint_temp.route('/')
 @watchlist_blueprint.route('/')
 @login_required
 def dashboard():
