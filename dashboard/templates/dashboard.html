@@ -17,15 +17,10 @@
         <div class="spacer"></div>
         
         <div class="dashboard-content">
-            <!-- Styled buttons for chart and heatmap -->
-            <button onclick="location.href='{{ url_for('chart.chart') }}'" class="chart-button">Go to Chart</button>
-            <button onclick="location.href='{{ url_for('heatmap.heatmap') }}'" class="heatmap-button">Go to Heatmap</button>
-            
-            <!-- My Watchlist button -->
-            <button class="watchlist-button" id="myWatchlistButton">
-                <span class="plus-sign">+</span>
-                My Watchlist
-            </button>
+            <!-- Styled buttons for chart, heatmap, and watchlist -->
+            <button onclick="location.href='{{ url_for('chart.chart') }}'" class="chart-button">Chart</button>
+            <button onclick="location.href='{{ url_for('heatmap.heatmap') }}'" class="heatmap-button">Heatmap</button>
+            <button onclick="location.href='{{ url_for('watchlist_temp.dashboard') }}'" class="heatmap-button">Watchlist</button>
         </div>
         
         <!-- Add spacing between buttons and the logout section -->

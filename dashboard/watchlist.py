@@ -8,7 +8,7 @@ watchlist_blueprint = Blueprint('watchlist', __name__, url_prefix= '/watchlist',
     static_folder='static', static_url_path='assets')
 
 # TODO: figure out structure but Tola likes this
-watchlist_blueprint_temp = Blueprint('watchlist', __name__, template_folder='templates',
+watchlist_blueprint_temp = Blueprint('watchlist_temp', __name__, template_folder='templates',
     static_folder='static', static_url_path='assets')
 
 @watchlist_blueprint_temp.route('/')
