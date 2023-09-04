@@ -7,6 +7,7 @@ from common.application.application import db
 from common.auth.login_required import login_required
 import yfinance as yf
 import locale
+from common.market.data.stocks import get_sp500_symbols
 
 paper_trading_blueprint = Blueprint('paper_trading', __name__,  template_folder='templates',
     static_folder='static', static_url_path='assets')
@@ -18,7 +19,7 @@ locale.setlocale( locale.LC_ALL, '' )
 def list_paper_trades():
     paper_trades = PaperTrade.query.all()
     current_stock_data = addStockData(paper_trades)
-    return render_template('papertrades.html', paper_trades=paper_trades, current_stock_data=current_stock_data)
+    return render_template('papertrades.html', paper_trades=paper_trades, current_stock_data=current_stock_data, sp500_symbols=get_sp500_symbols())
 
 @paper_trading_blueprint.route('/new', methods=['GET', 'POST'])
 @login_required
@@ -47,7 +48,7 @@ def create_paper_trade():
         
         return redirect(url_for('paper_trading.list_paper_trades'))
     
-    return render_template('create_paper_trades.html')
+    return render_template('create_paper_trades.html', sp500_symbols=get_sp500_symbols())
 
 @paper_trading_blueprint.route('/remove/<int:trade_id>', methods=['POST'])
 @login_required

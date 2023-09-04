@@ -90,3 +90,32 @@ select {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     position: relative;
 }
+
+.ui-autocomplete {
+    position: absolute;
+    z-index: 1000; /* Adjust the z-index value as needed */
+    border: 1px solid #ccc;
+    background-color: #fff;
+    max-height: 200px; /* Limit the maximum height of the suggestions */
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+}
+
+.ui-menu {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* Style for each menu item */
+.ui-menu-item {
+    padding: 8px 12px; /* Add padding to space out the items */
+}
+
+/* Style the selected suggestion item */
+.ui-state-focus {
+    background-color: #007bff; /* Highlight color when a suggestion is selected */
+    color: #fff;
+}
+
+.ui-helper-hidden-accessible {
+    display: none;
+}

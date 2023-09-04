@@ -6,10 +6,11 @@ from concurrent.futures import ThreadPoolExecutor
 from common.auth.login_required import login_required
 import plotly.express as px
 import yfinance as yf
+from common.market.data.stocks import get_sp500_symbols
 
 heatmap_blueprint = Blueprint('heatmap', __name__)
 
-sp500 = pd.read_html(r'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]['Symbol']
+sp500 = get_sp500_symbols()
 
 heatmap_data = pd.DataFrame()
 

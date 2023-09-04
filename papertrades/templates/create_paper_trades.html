@@ -3,7 +3,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Include the sp500_symbols variable in a separate script block -->
+    <script>
+        var sp500 = {{ sp500_symbols | tojson | safe }};
+    </script>
     <link rel="stylesheet" href="{{ url_for('paper_trading.static', filename='create_paper_trades.css') }}">
+    <script src="{{ url_for('paper_trading.static', filename='createpapertrades.js') }}"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Paper Trade</title>
@@ -26,5 +31,12 @@
             <button type="submit" class="submit-button">Create Trade</button>
         </form>
     </div>
+
+     <!-- Include jQuery and jQuery UI scripts before your custom JavaScript -->
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+     
+     <!-- Include your custom JavaScript for autocomplete -->
+     <script src="{{ url_for('paper_trading.static', filename='createpapertrades.js') }}"></script>
 </body>
 </html>

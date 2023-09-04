@@ -46,6 +46,7 @@ def get_current_price():
     symbol = request.args.get('symbol')
     stock_info = yf.Ticker(symbol)
     current_price = stock_info.history(period="1d")["Close"][0]
+    current_price = round(current_price, 2)
     return jsonify({"current_price": current_price})
 
 def generate_chart(symbol):
