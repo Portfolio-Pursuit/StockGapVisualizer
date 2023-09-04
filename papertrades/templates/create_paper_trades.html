@@ -11,7 +11,7 @@
 <body>
     <div class="container">
         <h1>Create Paper Trade</h1>
-        <form method="POST">
+        <form method="POST" action="{{ url_for('paper_trading.create_paper_trade') }}"> 
             <label for="asset">Asset:</label>
             <input type="text" id="asset" name="asset" required>
             <label for="direction">Direction:</label>
@@ -25,7 +25,6 @@
             <input type="number" id="entry_price" name="entry_price" step="0.01" required>
             <button type="submit" class="submit-button">Create Trade</button>
         </form>
-        <a class="back-button" href="{{ url_for('paper_trading.list_paper_trades') }}">Back to Paper Trades</a>
     </div>
 </body>
 </html>

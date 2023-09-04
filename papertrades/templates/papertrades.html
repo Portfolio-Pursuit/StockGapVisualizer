@@ -4,6 +4,7 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="{{ url_for('paper_trading.static', filename='papertradesStyle.css') }}">
+    <script src="{{ url_for('paper_trading.static', filename='papertrades.js') }}"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DataDash - Paper Trades</title>
@@ -52,8 +53,15 @@
                 </tbody>
             </table>
         </div>
-        <button onclick="location.href='{{ url_for('paper_trading.create_paper_trade') }}'" class="papertrades-button">Create New Paper Trade</button>
+        <button id="showPopupButton" class="papertrades-button">Create New Paper Trade</button>      
         <button onclick="location.href='{{ url_for('dashboard.dashboard') }}'" class="papertrades-button">Back to Dashboard</button>
+        <!-- The popup form -->
+        <div class="popup-container" id="popupContainer">
+            <div class="popup">
+                <!-- Include your create_paper_trades.html content here -->
+                {% include 'create_paper_trades.html' %}
+            </div>
+        </div>  
     </div>      
 </body>
 </html>
