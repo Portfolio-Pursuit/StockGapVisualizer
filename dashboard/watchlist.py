@@ -3,19 +3,32 @@
 import yfinance as yf
 from common.auth.login_required import login_required
 from flask import render_template, Blueprint
+import os
+from jinja2 import ChoiceLoader, FileSystemLoader, Environment
 
-watchlist_blueprint = Blueprint('watchlist', __name__, url_prefix= '/watchlist', template_folder='templates',
-    static_folder='static', static_url_path='assets')
+full_path = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
+common_ui_folder = os.path.join(full_path, 'common', 'ui', 'templates')
+local_ui_folder = os.path.join(full_path, 'dashboard', 'templates')
 
+loader = ChoiceLoader(
+    [
+        FileSystemLoader(local_ui_folder),  # Your project-specific templates
+        FileSystemLoader(common_ui_folder),  # Common templates
+    ]
+)
+
+jinja2_env = Environment(loader=loader)
+
+watchlist_blueprint = Blueprint('watchlist', __name__, url_prefix= '/watchlist', static_folder='static', static_url_path='assets')
 # TODO: figure out structure but Tola likes this
-watchlist_blueprint_temp = Blueprint('watchlist_temp', __name__, template_folder='templates',
-    static_folder='static', static_url_path='assets')
+watchlist_blueprint_temp = Blueprint('watchlist_temp', __name__, url_prefix= '/watchlist', static_folder='static', static_url_path='assets')
+local_template = 'watchlist.html'
 
 @watchlist_blueprint_temp.route('/')
 @watchlist_blueprint.route('/')
 @login_required
-def dashboard():
-    return render_template('watchlist.html')
+def watchlist():
+    return jinja2_env.get_template(local_template).render()
 
 class WatchlistItem:
     def __init__(self, ticker):

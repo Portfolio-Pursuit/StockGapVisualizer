@@ -8,7 +8,24 @@ from common.auth.login_required import login_required
 import yfinance as yf
 import locale
 from common.market.data.stocks import get_sp500_symbols
+import os
+from jinja2 import ChoiceLoader, FileSystemLoader, Environment
 
+full_path = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
+common_ui_folder = os.path.join(full_path, 'common', 'ui', 'templates')
+local_ui_folder = os.path.join(full_path, 'papertrades', 'templates')
+
+loader = ChoiceLoader(
+    [
+        FileSystemLoader(local_ui_folder),  # Your project-specific templates
+        FileSystemLoader(common_ui_folder),  # Common templates
+    ]
+)
+
+jinja2_env = Environment(loader=loader)
+jinja2_env.globals['url_for'] = url_for 
+
+local_template = 'papertrades.html'
 paper_trading_blueprint = Blueprint('paper_trading', __name__,  template_folder='templates',
     static_folder='static', static_url_path='assets')
 
@@ -19,7 +36,7 @@ locale.setlocale( locale.LC_ALL, '' )
 def list_paper_trades():
     paper_trades = PaperTrade.query.all()
     current_stock_data = addStockData(paper_trades)
-    return render_template('papertrades.html', paper_trades=paper_trades, current_stock_data=current_stock_data, sp500_symbols=get_sp500_symbols())
+    return jinja2_env.get_template(local_template).render(paper_trades=paper_trades, current_stock_data=current_stock_data, sp500_symbols=get_sp500_symbols())
 
 @paper_trading_blueprint.route('/new', methods=['GET', 'POST'])
 @login_required

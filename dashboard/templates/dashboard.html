@@ -6,9 +6,12 @@
     <link rel="stylesheet" type="text/css" href="styles.css"> <!-- Include your CSS file here -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>DataDash - Dashboard</title>
 </head>
 <body>
+    {% set active_item = 'dashboard' %}
+    {% include 'navbar.html' %}
     <div class="dashboard-container">
         <h1>Welcome to DataDash Dashboard</h1>
         <p>Here you can customize and view your data visualizations.</p>
@@ -20,7 +23,7 @@
             <!-- Styled buttons for chart, heatmap, and watchlist -->
             <button onclick="location.href='{{ url_for('chart.chart') }}'" class="chart-button">Chart</button>
             <button onclick="location.href='{{ url_for('heatmap.heatmap') }}'" class="heatmap-button">Heatmap</button>
-            <button onclick="location.href='{{ url_for('watchlist_temp.dashboard') }}'" class="heatmap-button">Watchlist</button>
+            <button onclick="location.href='{{ url_for('watchlist_temp.watchlist') }}'" class="heatmap-button">Watchlist</button>
             <button onclick="location.href='{{ url_for('paper_trading.list_paper_trades') }}'" class="heatmap-button">Paper Trading</button>
         </div>
         

@@ -4,12 +4,16 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="{{ url_for('paper_trading.static', filename='papertradesStyle.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="{{ url_for('paper_trading.static', filename='papertrades.js') }}"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DataDash - Paper Trades</title>
 </head>
 <body>
+    {% set active_item = 'papertrading' %}
+    {% include 'navbar.html' %}
+
     <div class="papertrades-container">
         <h1 class="papertrades-title">Paper Trades</h1>
         <div class="papertrades-scroll-container">

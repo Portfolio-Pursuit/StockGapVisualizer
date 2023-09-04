@@ -7,9 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Gap Visualizer - Heatmap</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='heatmapStyle.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="{{ url_for('static', filename='heatmapScripts.js') }}"></script>
 </head>
 <body>
+    {% set active_item = 'heatmap' %}
+    {% include 'navbar.html' %}
+
     <div class="container">
         <div class="heatmap-container">
             <div class="chart-container">
@@ -18,6 +22,8 @@
                         {{ heatmap | safe }}
                     </div>
                 {% endif %}
+
+                {{ script | safe }}
             </div> 
             <label for="start-date">Start Date:</label>
             <input type="date" id="start-date">

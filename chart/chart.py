@@ -1,11 +1,27 @@
 # chart.chart.py
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, url_for
 import yfinance as yf
 import plotly.graph_objs as go
 from common.auth.login_required import login_required
+import os
+from jinja2 import ChoiceLoader, FileSystemLoader, Environment
 
-chart_blueprint = Blueprint('chart', __name__,  template_folder='templates',
-    static_folder='static', static_url_path='assets')
+full_path = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
+common_ui_folder = os.path.join(full_path, 'common', 'ui', 'templates')
+local_ui_folder = os.path.join(full_path, 'chart', 'templates')
+
+loader = ChoiceLoader(
+    [
+        FileSystemLoader(local_ui_folder),  # Your project-specific templates
+        FileSystemLoader(common_ui_folder),  # Common templates
+    ]
+)
+
+jinja2_env = Environment(loader=loader)
+jinja2_env.globals['url_for'] = url_for 
+
+chart_blueprint = Blueprint('chart', __name__, static_folder='static', static_url_path='assets')
+local_template = 'chart.html'
 
 @chart_blueprint.route('/', methods=['POST', 'GET'])
 @login_required
@@ -38,7 +54,7 @@ def chart():
 
         chart_html = generate_chart(symbol)
 
-    return render_template('chart.html', symbol=symbol, chart_html=chart_html, current_price=current_price)
+    return jinja2_env.get_template(local_template).render(symbol=symbol, chart_html=chart_html, current_price=current_price)
 
 @chart_blueprint.route('/get_current_price')
 @login_required
