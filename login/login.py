@@ -3,6 +3,7 @@ from flask import Blueprint, redirect, render_template, request, url_for, jsonif
 from login.models.user import User
 from flask_login import login_user
 from common.application.application import db
+from papertrades.interactive.models.currency_interactive import initCurrency
 import bcrypt
 
 login_blueprint = Blueprint('login', __name__,  template_folder='templates',
@@ -48,6 +49,8 @@ def register():
 
         # Log in the new user
         login_user(new_user)
+
+        initCurrency(new_user)
 
         return jsonify({'success': 'Registration successful'})
 

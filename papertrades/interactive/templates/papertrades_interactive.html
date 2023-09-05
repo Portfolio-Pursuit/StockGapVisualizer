@@ -1,0 +1,72 @@
+<!-- papertrades.interactive.templates.papertrades_interactive.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('paper_trading.paper_trading_interactive.static', filename='papertrades_interactiveStyle.css') }}">
+    <script src="{{ url_for('paper_trading.paper_trading_interactive.static', filename='papertrades_interactive.js') }}"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataDash - Paper Trades</title>
+</head>
+<body>
+    {% set active_item = 'papertrading' %}
+    {% include 'navbar.html' %}
+
+    <div class="total-currency">
+        Total Currency: {{ total_currency }}
+    </div>
+
+    <div class="papertrades-container">
+        <h1 class="papertrades-title">Paper Trades</h1>
+        <div class="papertrades-scroll-container">
+            <table class="papertrades-table">
+                <thead>
+                    <tr class="papertrade-header-row">
+                        <th><strong>Trade ID</strong></th>
+                        <th><strong>Asset</strong></th>
+                        <th><strong>Direction</strong></th>
+                        <th><strong>Quantity</strong></th>
+                        <th><strong>Entry Price</strong></th>
+                        <th><strong>Timestamp</strong></th>
+                        <th><strong>Price Change</strong></th>
+                        <th><strong>Market Value</strong></th>
+                        <th><strong>Cost Basis</strong></th>
+                        <th><strong>Gain/Loss</strong></th>
+                        <th><strong>Current Price</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trade in paper_trades %}
+                        <tr class="papertrade-data-row" id="papertrade-data-row-{{ trade.id }}">
+                            <td>{{ trade.id }}</td>
+                            <td>{{ trade.asset }}</td>
+                            <td>{{ trade.direction }}</td>
+                            <td>{{ trade.quantity }}</td>
+                            <td>${{ trade.entry_price }}</td>
+                            <td>{{ trade.timestamp }}</td>
+                            <td id="price-change-{{ trade.id }}">{{ current_stock_data[trade.id]['price_change'] }}</td>
+                            <td id="market-value-{{ trade.id }}">{{ current_stock_data[trade.id]['market_value'] }}</td>
+                            <td id="cost-basis-{{ trade.id }}">{{ current_stock_data[trade.id]['cost_basis'] }}</td>
+                            <td id="gain-loss-{{ trade.id }}">{{ current_stock_data[trade.id]['gain_loss'] }}</td>
+                            <td id="current-price-{{ trade.id }}">{{ current_stock_data[trade.id]['current_price'] }}</td>
+                            <td>
+                                <button type="button" class="remove-button" onclick="removePaperTrade({{ trade.id }})">X</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button id="showPopupButton" class="papertrades-button">Create New Paper Trade</button>      
+        <button onclick="location.href='{{ url_for('dashboard.dashboard') }}'" class="papertrades-button">Back to Dashboard</button>
+        <!-- The popup form -->
+        <div class="popup-container" id="popupContainer">
+            <div class="popup">
+                <!-- Include your create_paper_trades.html content here -->
+                {% include 'create_papertrades_interactive.html' %}
+            </div>
+        </div>  
+    </div>      
+</body>
+</html>

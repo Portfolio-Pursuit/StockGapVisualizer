@@ -1,0 +1,116 @@
+/* papertrades.interactive.static.papertrades_interactiveStyle.css */
+
+.papertrades-container {
+    background-color: #f0f0f0; /* Light gray background */
+    border-radius: 8px;
+    padding: 20px;
+    width: 100%;
+    max-width: 1400px; /* Adjust the maximum width as needed */
+    margin: 0 auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: #000000;
+    font-family: 'Roboto', sans-serif;
+}
+
+.papertrades-title {
+    font-family: 'Bungee', cursive;
+    font-size: 36px;
+    color: #f9a825;
+    margin-bottom: 20px;
+}
+
+.papertrades-scroll-container {
+    max-height: 800px; /* Adjust the maximum height as needed */
+    overflow-y: auto; /* Add a vertical scrollbar when content overflows */
+}
+
+.papertrades-list {
+    padding: 0;
+}
+
+.papertrade-card {
+    background-color: #ffffff; /* White background for cards */
+    border: 1px solid #ddd; /* Subtle border for separation */
+    border-radius: 8px;
+    margin-bottom: 20px; /* Add spacing between cards */
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.papertrade-property {
+    margin: 0;
+    font-weight: bold;
+}
+
+.papertrades-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin: 5px;
+}
+
+.papertrades-button:hover {
+    background-color: #333;
+}
+
+.papertrade-card {
+    background-color: #ffffff; /* White background for cards */
+    border: 1px solid #ddd; /* Subtle border for separation */
+    border-radius: 8px;
+    margin-bottom: 20px; /* Add spacing between cards */
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+}
+
+.papertrade-properties,
+.papertrade-stats,
+.papertrade-timestamp {
+    flex: 1;
+    text-align: left;
+}
+
+.papertrade-stats {
+    text-align: right;
+}
+.papertrades-table th,
+.papertrades-table td {
+    padding: 10px 20px; /* Adjust the padding as needed */
+}
+
+.remove-button {
+    background-color: #ff3b3b; /* Red background color */
+    color: #fff; /* White text color */
+    border: none;
+    padding: 8px 12px; /* Adjust padding as needed */
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    margin: 0;
+    transition: background-color 0.3s ease;
+}
+
+.remove-button:hover {
+    background-color: #ff0000; /* Darker red on hover */
+}
+
+.total-currency {
+    background-color: #4CAF50; /* Green background color */
+    color: white; /* White text color */
+    padding: 10px; /* Adjust padding as needed */
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 20px; /* Add spacing between total currency and content */
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.total-currency span {
+    font-weight: bold;
+}

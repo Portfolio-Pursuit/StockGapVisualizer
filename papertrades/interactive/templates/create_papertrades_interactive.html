@@ -1,0 +1,42 @@
+<!-- papertrades.interactive.templates.create_papertrades_interactive.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Include the sp500_symbols variable in a separate script block -->
+    <script>
+        var sp500 = {{ sp500_symbols | tojson | safe }};
+    </script>
+    <link rel="stylesheet" href="{{ url_for('paper_trading.paper_trading_interactive.static', filename='create_papertrades_interactive.css') }}">
+    <script src="{{ url_for('paper_trading.paper_trading_interactive.static', filename='create_papertrades_interactive.js') }}"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Paper Trade</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Paper Trade</h1>
+        <label for="asset">Asset:</label>
+        <input type="text" id="asset" name="asset" required>
+        <label for="direction">Direction:</label>
+        <select id="direction" name="direction" required>
+            <option value="buy">Buy</option>
+            <option value="sell">Sell</option>
+        </select>
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required>
+        <label for="entry_price">Entry Price ($):</label>
+        <input type="number" id="entry_price" name="entry_price" disabled="true" step="0.01" required>
+        <button type="submit" id="create_papertrade_button" class="submit-button" onclick="createPaperTrade()">Create Trade</button>
+
+        <div id="error-message" class="error-message">{{ error_message }}</div>
+    </div>
+
+     <!-- Include jQuery and jQuery UI scripts before your custom JavaScript -->
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+     
+     <!-- Include your custom JavaScript for autocomplete -->
+     <script src="{{ url_for('paper_trading.paper_trading_interactive.static', filename='create_papertrades_interactive.js') }}"></script>
+</body>
+</html>

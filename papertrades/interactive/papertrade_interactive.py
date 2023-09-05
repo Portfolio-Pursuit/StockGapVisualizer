@@ -1,8 +1,9 @@
-# papertrades.papertrades.py
+# papertrades.interactive.papertrade_interactive.py
 
 from flask import Blueprint, request, flash, jsonify
 from datetime import datetime
-from papertrades.models.papertrades import PaperTrade
+from papertrades.interactive.models.papertrade_interactive import PaperTradeInteractive
+from papertrades.interactive.models.currency_interactive import CurrencyInteractive, initCurrency
 from common.application.application import db
 from common.auth.login_required import login_required
 import yfinance as yf
@@ -10,25 +11,24 @@ import locale
 from common.market.data.stocks import get_sp500_symbols
 from common.ui.navbar import navbar, getUIDir
 from flask_login import current_user
-from papertrades.interactive.papertrade_interactive import paper_trading_interactive_blueprint
 
 renderEnv = navbar(getUIDir(__file__)).getEnv()
 
-local_template = 'papertrades.html'
-paper_trading_blueprint = Blueprint('paper_trading', __name__,  template_folder='templates',
+local_template = 'papertrades_interactive.html'
+paper_trading_interactive_blueprint = Blueprint('paper_trading_interactive', __name__,  template_folder='templates',
     static_folder='static', static_url_path='assets')
-paper_trading_blueprint.register_blueprint(paper_trading_interactive_blueprint, url_prefix='/interactive')
 
 locale.setlocale( locale.LC_ALL, '' )
 
-@paper_trading_blueprint.route('/', methods=['GET'])
+@paper_trading_interactive_blueprint.route('/', methods=['GET'])
 @login_required
 def list_paper_trades():
-    paper_trades = PaperTrade.query.filter_by(user_id=current_user.id).all()
+    paper_trades = PaperTradeInteractive.query.filter_by(user_id=current_user.id).all()
     current_stock_data = addStockData(paper_trades)
-    return renderEnv.get_template(local_template).render(paper_trades=paper_trades, current_stock_data=current_stock_data, sp500_symbols=get_sp500_symbols())
+    return renderEnv.get_template(local_template).render(paper_trades=paper_trades, 
+            current_stock_data=current_stock_data, sp500_symbols=get_sp500_symbols(), total_currency=getTotalCurrency())
 
-@paper_trading_blueprint.route('/new', methods=['POST'])
+@paper_trading_interactive_blueprint.route('/new', methods=['POST'])
 @login_required
 def create_paper_trade():
     if request.method == 'POST':
@@ -37,7 +37,11 @@ def create_paper_trade():
         quantity = request.json.get('quantity')
         entry_price = request.json.get('entryPrice')
 
-        paper_trade = PaperTrade(
+        cost = int(quantity) * float(entry_price)
+        if cost > getTotalCurrencyNoFormat():
+            return 'Not enough total currency', 400
+
+        paper_trade = PaperTradeInteractive(
             user_id=current_user.id,
             asset=asset,
             direction=direction,
@@ -50,23 +54,25 @@ def create_paper_trade():
         db.session.add(paper_trade)
         db.session.commit()
 
-        # Return the newly created paper trade data in JSON format
-        return jsonify({'tradeId': paper_trade.id, 'timestamp': paper_trade.timestamp})
+        total_currency = formatCurrency(subtractFromTotalCurrency(cost))
 
-@paper_trading_blueprint.route('/remove/<int:trade_id>', methods=['POST'])
+        # Return the newly created paper trade data in JSON format
+        return jsonify({'tradeId': paper_trade.id, 'timestamp': paper_trade.timestamp, 'total_currency': total_currency })
+
+@paper_trading_interactive_blueprint.route('/remove/<int:trade_id>', methods=['POST'])
 @login_required
 def remove_paper_trade(trade_id):
-    paper_trade = PaperTrade.query.get_or_404(trade_id)
+    paper_trade = PaperTradeInteractive.query.get_or_404(trade_id)
     db.session.delete(paper_trade)
     db.session.commit()
     flash('Paper trade removed successfully', 'success')
     return jsonify({'message': 'Paper trade removed successfully'})
 
-@paper_trading_blueprint.route('/get_stock_data/<int:trade_id>', methods=['GET'])
+@paper_trading_interactive_blueprint.route('/get_stock_data/<int:trade_id>', methods=['GET'])
 @login_required
 def get_stock_data_for_trade(trade_id):
-    # Get the PaperTrade object by trade_id
-    paper_trade = PaperTrade.query.get_or_404(trade_id)
+    # Get the PaperTradeInteractive object by trade_id
+    paper_trade = PaperTradeInteractive.query.get_or_404(trade_id)
 
     # Get the asset symbol for the trade
     asset = paper_trade.asset
@@ -89,7 +95,7 @@ def get_stock_data_for_trade(trade_id):
             raise Exception("Current price not available")
 
         current_price = round(current_price, 2)
-        stock_data['current_price'] = locale.currency(current_price, grouping=True)
+        stock_data['current_price'] = formatCurrency(current_price)
 
         # Calculate gain/loss, price change, cost basis, and market value
         cost_basis = paper_trade.entry_price * paper_trade.quantity
@@ -98,10 +104,10 @@ def get_stock_data_for_trade(trade_id):
         is_buy = paper_trade.direction == "buy"
         gain_loss = (1 if is_buy else -1) * (market_value - cost_basis)
 
-        stock_data['gain_loss'] = locale.currency(gain_loss, grouping=True)
-        stock_data['price_change'] = locale.currency(price_change, grouping=True)
-        stock_data['cost_basis'] = locale.currency(cost_basis, grouping=True)
-        stock_data['market_value'] = locale.currency(market_value, grouping=True)
+        stock_data['gain_loss'] = formatCurrency(gain_loss)
+        stock_data['price_change'] = formatCurrency(price_change)
+        stock_data['cost_basis'] = formatCurrency(cost_basis)
+        stock_data['market_value'] = formatCurrency(market_value)
 
     except Exception as e:
         print(f"Error fetching stock data for {asset}: {str(e)}")
@@ -141,10 +147,34 @@ def addStockData(paper_trades):
             isBuy = trade.direction == "buy"
             gain_loss = (1 if isBuy else -1) * (market_value - cost_basis)
             paper_trades_to_stock_data[trade.id] = {
-                'current_price': locale.currency(current_price, grouping=True),
-                'gain_loss': locale.currency(gain_loss, grouping=True), 
-                'price_change': locale.currency(price_change, grouping=True), 
-                'cost_basis': locale.currency(cost_basis, grouping=True), 
-                'market_value': locale.currency(market_value, grouping=True), 
+                'current_price': formatCurrency(current_price),
+                'gain_loss': formatCurrency(gain_loss), 
+                'price_change': formatCurrency(price_change), 
+                'cost_basis': formatCurrency(cost_basis), 
+                'market_value': formatCurrency(market_value), 
             }
     return paper_trades_to_stock_data
+
+def getTotalCurrency():
+    currency = getTotalCurrencyNoFormat()
+    if not currency:
+        initCurrency(current_user)
+        currency = getTotalCurrencyNoFormat()
+    return formatCurrency(currency)
+
+def formatCurrency(currency):
+    return locale.currency(currency, grouping=True)
+
+def getTotalCurrencyNoFormat():
+    return CurrencyInteractive.query.filter_by(user_id=current_user.id).first().total_currency
+
+def subtractFromTotalCurrency(cost):
+    user_currency = CurrencyInteractive.query.filter_by(user_id=current_user.id).first()
+    
+    if user_currency:
+        user_currency.total_currency -= cost
+        db.session.commit()
+        return user_currency.total_currency 
+    else:
+        raise Exception("User currency data not found")
+        return 'Unknown'

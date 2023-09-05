@@ -15,6 +15,8 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+from papertrades.interactive.models.currency_interactive import *
+from papertrades.interactive.models.papertrade_interactive import *
 from papertrades.models.papertrades import *
 from login.models.user import *
 
