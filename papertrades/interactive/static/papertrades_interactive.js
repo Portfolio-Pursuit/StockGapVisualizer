@@ -31,9 +31,14 @@ function removePaperTrade(tradeId) {
             if (rowToRemove) {
                 rowToRemove.remove();
             }
+            return response.json()
         } else {
             console.error('Failed to remove paper trade');
         }
+    })
+    .then(data => {
+        const totalCurrencyElement = document.querySelector('.total-currency');
+        totalCurrencyElement.textContent = `Total Currency: ${data.total_currency}`;
     })
     .catch(error => {
         console.error('Error while removing paper trade', error);

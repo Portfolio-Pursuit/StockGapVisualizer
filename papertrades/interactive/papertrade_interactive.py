@@ -1,6 +1,6 @@
 # papertrades.interactive.papertrade_interactive.py
 
-from flask import Blueprint, request, flash, jsonify
+from flask import Blueprint, request, jsonify
 from datetime import datetime
 from papertrades.interactive.models.papertrade_interactive import PaperTradeInteractive
 from papertrades.interactive.models.currency_interactive import CurrencyInteractive, initCurrency
@@ -38,6 +38,8 @@ def create_paper_trade():
         entry_price = request.json.get('entryPrice')
 
         cost = int(quantity) * float(entry_price)
+        if int(quantity) <= 0:
+            return 'Not valid quantity', 400
         if cost > getTotalCurrencyNoFormat():
             return 'Not enough total currency', 400
 
@@ -65,16 +67,22 @@ def remove_paper_trade(trade_id):
     paper_trade = PaperTradeInteractive.query.get_or_404(trade_id)
     db.session.delete(paper_trade)
     db.session.commit()
-    flash('Paper trade removed successfully', 'success')
-    return jsonify({'message': 'Paper trade removed successfully'})
+    stock_data = get_stock_data_for_papertrade(paper_trade)
+    total_currency = formatCurrency(subtractFromTotalCurrency(-float(stock_data['market_value'])))
+    return jsonify({'total_currency': total_currency, 'message': 'Paper trade removed successfully'})
 
 @paper_trading_interactive_blueprint.route('/get_stock_data/<int:trade_id>', methods=['GET'])
 @login_required
 def get_stock_data_for_trade(trade_id):
     # Get the PaperTradeInteractive object by trade_id
     paper_trade = PaperTradeInteractive.query.get_or_404(trade_id)
+    stock_data = get_stock_data_for_papertrade(paper_trade)
+    for key in stock_data.keys():
+        stock_data[key] = formatCurrency(stock_data[key])
+    return jsonify(stock_data)
 
-    # Get the asset symbol for the trade
+def get_stock_data_for_papertrade(paper_trade):
+        # Get the asset symbol for the trade
     asset = paper_trade.asset
 
     # Define a dictionary to hold the stock data
@@ -95,7 +103,7 @@ def get_stock_data_for_trade(trade_id):
             raise Exception("Current price not available")
 
         current_price = round(current_price, 2)
-        stock_data['current_price'] = formatCurrency(current_price)
+        stock_data['current_price'] = current_price
 
         # Calculate gain/loss, price change, cost basis, and market value
         cost_basis = paper_trade.entry_price * paper_trade.quantity
@@ -104,15 +112,14 @@ def get_stock_data_for_trade(trade_id):
         is_buy = paper_trade.direction == "buy"
         gain_loss = (1 if is_buy else -1) * (market_value - cost_basis)
 
-        stock_data['gain_loss'] = formatCurrency(gain_loss)
-        stock_data['price_change'] = formatCurrency(price_change)
-        stock_data['cost_basis'] = formatCurrency(cost_basis)
-        stock_data['market_value'] = formatCurrency(market_value)
+        stock_data['gain_loss'] = gain_loss
+        stock_data['price_change'] = price_change
+        stock_data['cost_basis'] = cost_basis
+        stock_data['market_value'] = market_value
 
     except Exception as e:
         print(f"Error fetching stock data for {asset}: {str(e)}")
-
-    return jsonify(stock_data)
+    return stock_data
 
 def addStockData(paper_trades):
     paper_trades_to_stock_data = {}
