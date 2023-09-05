@@ -68,7 +68,13 @@ def remove_paper_trade(trade_id):
     db.session.delete(paper_trade)
     db.session.commit()
     stock_data = get_stock_data_for_papertrade(paper_trade)
-    total_currency = formatCurrency(subtractFromTotalCurrency(-float(stock_data['market_value'])))
+    is_buy = paper_trade.direction == "buy"
+    if is_buy:
+        profit = -1 * float(stock_data['market_value'])
+    else: 
+        profit = -1 * (float(stock_data['cost_basis'] + stock_data['gain_loss']))
+
+    total_currency = formatCurrency(subtractFromTotalCurrency(profit))
     return jsonify({'total_currency': total_currency, 'message': 'Paper trade removed successfully'})
 
 @paper_trading_interactive_blueprint.route('/get_stock_data/<int:trade_id>', methods=['GET'])
