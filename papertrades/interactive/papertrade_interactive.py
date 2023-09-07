@@ -191,3 +191,23 @@ def subtractFromTotalCurrency(cost):
     else:
         raise Exception("User currency data not found")
         return 'Unknown'
+    
+# Define the stock or ETF symbol for which you want to retrieve option data
+symbol = "AAPL"  # Example: Apple Inc.
+
+# Create a Yahoo Finance ticker object
+stock = yf.Ticker(symbol)
+
+# Get the option chain for the selected stock
+option_chain = stock.option_chain()
+
+# Access call and put option data
+calls = option_chain.calls
+puts = option_chain.puts
+
+# Display the option chain data
+print("Call Options:")
+print(calls.head())
+
+print("\nPut Options:")
+print(puts.head())

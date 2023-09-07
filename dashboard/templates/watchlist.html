@@ -1,18 +1,67 @@
-<!-- dashboard.templates.watchlist.html -->
+<!-- watchlist.html -->
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watchlist</title>
-</head>
-<body>
-    {% set active_item = 'watchlist' %}
-    {% include 'navbar.html' %}
+{% set active_item = 'watchlist' %}
+{% include 'navbar.html' %}
+<div class="container mt-5">
+    <h2>My Watchlist</h2>
 
-    <div class="container mt-5">
-        <h2>My Watchlist</h2>
+    <!-- Editable Watchlist -->
+    <div class="card">
+        <div class="card-header">
+            Edit Your Watchlist
+        </div>
+        <div class="card-body">
+            <ul>
+                <!-- Example watchlist item (You can loop through user's watchlist data here) -->
+                <li>AAPL - Apple Inc. <a href="#">Remove</a></li>
+                <li>GOOGL - Alphabet Inc. <a href="#">Remove</a></li>
+                <!-- Users can add and remove items as needed -->
+            </ul>
+            <!-- Add new stock form -->
+            <form action="#" method="post">
+                <div class="form-group">
+                    <label for="newStockSymbol">Add New Stock:</label>
+                    <input type="text" class="form-control" id="newStockSymbol" name="newStockSymbol" placeholder="Enter Stock Symbol">
+                </div>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div>
     </div>
+
+    <!-- Other Containers Separated by Sectors -->
+    <div class="mt-4">
+        <!-- Container for Technology Sector -->
+        <div class="card">
+            <div class="card-header">
+                Technology Sector
+            </div>
+            <div class="card-body">
+                <ul>
+                    <!-- Example stocks in the Technology sector (You can loop through sector data here) -->
+                    <li>AAPL - Apple Inc.</li>
+                    <li>GOOGL - Alphabet Inc.</li>
+                    <!-- Add more stocks for this sector -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Container for Finance Sector -->
+        <div class="card mt-3">
+            <div class="card-header">
+                Finance Sector
+            </div>
+            <div class="card-body">
+                <ul>
+                    <!-- Example stocks in the Finance sector (You can loop through sector data here) -->
+                    <li>JPM - JPMorgan Chase & Co.</li>
+                    <li>BAC - Bank of America Corp.</li>
+                    <!-- Add more stocks for this sector -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Add more sector containers as needed -->
+    </div>
+</div>
 </body>
 </html>

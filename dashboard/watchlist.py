@@ -2,61 +2,45 @@
 
 import yfinance as yf
 from common.auth.login_required import login_required
-from flask import render_template, Blueprint
+from flask import Blueprint, Flask, request
 from common.ui.navbar import navbar, getUIDir
 
 renderEnv = navbar(getUIDir(__file__)).getEnv()
 
-watchlist_blueprint = Blueprint('watchlist', __name__, url_prefix= '/watchlist', static_folder='static', static_url_path='assets')
-# TODO: figure out structure but Tola likes this
-watchlist_blueprint_temp = Blueprint('watchlist_temp', __name__, url_prefix= '/watchlist', static_folder='static', static_url_path='assets')
+watchlist_blueprint = Blueprint('watchlist_temp', __name__, url_prefix= '/watchlist', static_folder='static', static_url_path='assets')
 local_template = 'watchlist.html'
 
-@watchlist_blueprint_temp.route('/')
-@watchlist_blueprint.route('/')
+# Sample stocks for the watchlist
+watchlist_stocks = ["AAPL", "GOOGL", "TSLA", "MSFT", "AMZN"]
+
+@watchlist_blueprint.route('/', methods=['GET', 'POST'])
 @login_required
-def watchlist():
-    return renderEnv.get_template(local_template).render()
+def watchlist_page():
+    global watchlist_stocks
+    watchlist_data = []
 
-class WatchlistItem:
-    def __init__(self, ticker):
-        self.ticker = ticker
-        self.data = self.fetch_stock_data()
+    if request.method == 'POST':
+        new_stock_symbol = request.form.get('newStockSymbol')
+        if new_stock_symbol:
+            try:
+                stock_info = yf.Ticker(new_stock_symbol)
+                data = stock_info.history(period="1d")  # Fetch today's data for demonstration
+                if not data.empty:
+                    watchlist_stocks.append(new_stock_symbol)
+            except Exception as e:
+                print(f"Error adding new stock {new_stock_symbol}: {str(e)}")
 
-    def fetch_stock_data(self):
+    for ticker in watchlist_stocks:
         try:
-            stock_info = yf.Ticker(self.ticker)
+            stock_info = yf.Ticker(ticker)
             data = stock_info.history(period="1d")  # Fetch today's data for demonstration
             if not data.empty:
-                return {
-                    "ticker": self.ticker,
+                watchlist_data.append({
+                    "ticker": ticker,
+                    "stock_name": "Company Name",  # Replace with actual company name if available
                     "current_price": data["Close"][0],
-                    "high_price": data["High"][0],
-                    "low_price": data["Low"][0],
-                }
-            else:
-                return None
+                })
         except Exception as e:
-            print(f"Error fetching data for {self.ticker}: {str(e)}")
-            return None
+            print(f"Error fetching data for {ticker}: {str(e)}")
 
-# Simulated user watchlist
-user_watchlist = ["AAPL", "GOOGL", "TSLA", "MSFT"]
-
-def get_watchlist_data():
-    watchlist_data = []
-    for ticker in user_watchlist:
-        item = WatchlistItem(ticker)
-        if item.data:
-            watchlist_data.append(item.data)
-    return watchlist_data
-
-# Example usage
-if __name__ == "__main__":
-    watchlist_data = get_watchlist_data()
-    for item in watchlist_data:
-        print(f"Ticker: {item['ticker']}")
-        print(f"Current Price: {item['current_price']}")
-        print(f"High Price: {item['high_price']}")
-        print(f"Low Price: {item['low_price']}")
-        print("---")
+    return renderEnv.get_template(local_template).render(watchlist_data=watchlist_data)

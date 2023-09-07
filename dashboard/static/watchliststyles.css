@@ -1,18 +1,51 @@
-/* dashboard.static.watchliststyles.css */
+/* Basic styling for the header/navbar */
+header {
+    background-color: #2E2E2E;
+    padding: 1rem;
+    text-align: center;
+    color: white;
+}
 
-/* Style the button */
-.watchlist-button {
-    background-color: #f0f0f0; /* Grey background color */
-    color: #000; /* Black text color */
+.navbar h1 {
+    margin: 0;
+}
+
+/* Styling for the stock cards */
+.stock-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-evenly;
+    padding: 1rem;
+}
+
+.stock-card {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    width: 300px;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: white;
+}
+
+.stock-info h2 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.stock-actions button {
+    background-color: #2196F3;
+    color: white;
     border: none;
-    padding: 10px 20px; /* Adjust padding as needed */
-    font-size: 16px;
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
-/* Style the "+" sign */
-.plus-sign {
-    font-size: 24px;
-    margin-right: 5px; /* Add some spacing between the "+" sign and text */
+.stock-actions button:hover {
+    background-color: #0e6ee7;
 }
+
+/* Add more styles as needed */
