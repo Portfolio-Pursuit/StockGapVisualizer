@@ -14,7 +14,7 @@
     <ul>
         {% for stock in watchlist_data %}
         <li>
-            <a href="/stock/{{ stock.ticker }}">
+            <a href="/chart?symbol={{ stock.ticker }}">
                 {{ stock.ticker }} - {{ stock.stock_name }}
             </a>
             <div class="mini-chart">

@@ -2,6 +2,7 @@
 
 import yfinance as yf
 from common.auth.login_required import login_required
+from common.market.data.stocks import current_price
 from flask import Blueprint, Flask, request
 from common.ui.navbar import navbar, getUIDir
 
@@ -19,28 +20,20 @@ def watchlist():
     global watchlist_stocks
     watchlist_data = []
 
-    if request.method == 'POST':
-        new_stock_symbol = request.form.get('newStockSymbol')
-        if new_stock_symbol:
-            try:
-                stock_info = yf.Ticker(new_stock_symbol)
-                data = stock_info.history(period="1d")  # Fetch today's data for demonstration
-                if not data.empty:
-                    watchlist_stocks.append(new_stock_symbol)
-            except Exception as e:
-                print(f"Error adding new stock {new_stock_symbol}: {str(e)}")
+    # if request.method == 'POST':
+    #     new_stock_symbol = request.form.get('newStockSymbol')
+    #     if new_stock_symbol:
+    #         try:
+    #             stock_info = yf.Ticker(new_stock_symbol)
+    #             data = stock_info.history(period="1d")  # Fetch today's data for demonstration
+    #             if not data.empty:
+    #                 watchlist_stocks.append(new_stock_symbol)
+    #         except Exception as e:
+    #             print(f"Error adding new stock {new_stock_symbol}: {str(e)}")
 
     for ticker in watchlist_stocks:
-        try:
-            stock_info = yf.Ticker(ticker)
-            data = stock_info.history(period="1d")  # Fetch today's data for demonstration
-            if not data.empty:
-                watchlist_data.append({
-                    "ticker": ticker,
-                    "stock_name": "Company Name",  # Replace with actual company name if available
-                    "current_price": data["Close"][0],
-                })
-        except Exception as e:
-            print(f"Error fetching data for {ticker}: {str(e)}")
-
+        watchlist_data.append({
+            "ticker": ticker,
+            "current_price": current_price(ticker),
+        })
     return renderEnv.get_template(local_template).render(watchlist_data=watchlist_data)

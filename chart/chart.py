@@ -4,6 +4,7 @@ import yfinance as yf
 import plotly.graph_objs as go
 from common.auth.login_required import login_required
 from common.ui.navbar import navbar, getUIDir
+from common.market.data.stocks import current_price
 
 renderEnv = navbar(getUIDir(__file__)).getEnv()
 
@@ -15,44 +16,27 @@ local_template = 'chart.html'
 def chart():
     symbol = ""
     chart_html = ""
-    current_price = 50
 
-    if request.method == 'POST':
-        symbol = request.form['symbol']
-        target_price = request.form.get('target_price')
+    symbol = request.args.get('symbol', 'Spy')
+    target_price = request.form.get('target_price')
 
-        stock_info = yf.Ticker(symbol)
-        current_price = stock_info.history(period="1d")["Close"][0]
+    current_price_data = current_price(symbol)
+    target_price = current_price_data
 
-        if target_price and target_price != "":
-            target_price = float(target_price)
-            check_target_price(current_price, target_price)
+    if target_price and target_price != "":
+        target_price = float(target_price)
+        check_target_price(current_price_data, target_price)
 
-        chart_html = generate_chart(symbol)
-    else:
-        symbol = 'SPY'
-        stock_info = yf.Ticker(symbol)
-        current_price = stock_info.history(period="1d")["Close"][0]
-        target_price = current_price
+    chart_html = generate_chart(symbol)
 
-        if target_price and target_price != "":
-            target_price = float(target_price)
-            check_target_price(current_price, target_price)
-
-        chart_html = generate_chart(symbol)
-
-    return renderEnv.get_template(local_template).render(symbol=symbol, chart_html=chart_html, current_price=current_price)
+    return renderEnv.get_template(local_template).render(symbol=symbol, chart_html=chart_html, current_price=current_price_data)
 
 @chart_blueprint.route('/get_current_price')
 @login_required
 def get_current_price():
     symbol = request.args.get('symbol')
-    stock_info = yf.Ticker(symbol)
-    try:
-        current_price = stock_info.history(period="1d")["Close"].iloc[0]
-        current_price = round(current_price, 2)
-    except:
-        current_price = 'Unknown'
+    current_price = current_price(symbol)
+    current_price = round(current_price, 2) if current_price else "Unknown"
     return jsonify({"current_price": current_price})
 
 def generate_chart(symbol):
