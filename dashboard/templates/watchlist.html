@@ -2,66 +2,30 @@
 
 {% set active_item = 'watchlist' %}
 {% include 'navbar.html' %}
-<div class="container mt-5">
-    <h2>My Watchlist</h2>
+<body>
+    <h1>My Watchlist</h1>
 
-    <!-- Editable Watchlist -->
-    <div class="card">
-        <div class="card-header">
-            Edit Your Watchlist
-        </div>
-        <div class="card-body">
-            <ul>
-                <!-- Example watchlist item (You can loop through user's watchlist data here) -->
-                <li>AAPL - Apple Inc. <a href="#">Remove</a></li>
-                <li>GOOGL - Alphabet Inc. <a href="#">Remove</a></li>
-                <!-- Users can add and remove items as needed -->
-            </ul>
-            <!-- Add new stock form -->
-            <form action="#" method="post">
-                <div class="form-group">
-                    <label for="newStockSymbol">Add New Stock:</label>
-                    <input type="text" class="form-control" id="newStockSymbol" name="newStockSymbol" placeholder="Enter Stock Symbol">
-                </div>
-                <button type="submit" class="btn btn-primary">Add</button>
-            </form>
-        </div>
-    </div>
+    <form method="POST" action="/watchlist">
+        <label for="newStockSymbol">Add Stock Symbol:</label>
+        <input type="text" id="newStockSymbol" name="newStockSymbol" placeholder="Enter stock symbol">
+        <button type="submit">Add</button>
+    </form>
 
-    <!-- Other Containers Separated by Sectors -->
-    <div class="mt-4">
-        <!-- Container for Technology Sector -->
-        <div class="card">
-            <div class="card-header">
-                Technology Sector
+    <ul>
+        {% for stock in watchlist_data %}
+        <li>
+            <a href="/stock/{{ stock.ticker }}">
+                {{ stock.ticker }} - {{ stock.stock_name }}
+            </a>
+            <div class="mini-chart">
+                <!-- Render a mini chart for the stock here -->
+                <!-- You can use JavaScript or server-side rendering to generate the mini chart -->
             </div>
-            <div class="card-body">
-                <ul>
-                    <!-- Example stocks in the Technology sector (You can loop through sector data here) -->
-                    <li>AAPL - Apple Inc.</li>
-                    <li>GOOGL - Alphabet Inc.</li>
-                    <!-- Add more stocks for this sector -->
-                </ul>
-            </div>
-        </div>
+            <p>Current Price: {{ stock.current_price }}</p>
+        </li>
+        {% endfor %}
+    </ul>
 
-        <!-- Container for Finance Sector -->
-        <div class="card mt-3">
-            <div class="card-header">
-                Finance Sector
-            </div>
-            <div class="card-body">
-                <ul>
-                    <!-- Example stocks in the Finance sector (You can loop through sector data here) -->
-                    <li>JPM - JPMorgan Chase & Co.</li>
-                    <li>BAC - Bank of America Corp.</li>
-                    <!-- Add more stocks for this sector -->
-                </ul>
-            </div>
-        </div>
-
-        <!-- Add more sector containers as needed -->
-    </div>
-</div>
+    <!-- Include any additional JavaScript for handling chart rendering or interactions -->
 </body>
-</html>
+</htm

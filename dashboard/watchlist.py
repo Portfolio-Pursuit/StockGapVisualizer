@@ -15,7 +15,7 @@ watchlist_stocks = ["AAPL", "GOOGL", "TSLA", "MSFT", "AMZN"]
 
 @watchlist_blueprint.route('/', methods=['GET', 'POST'])
 @login_required
-def watchlist_page():
+def watchlist():
     global watchlist_stocks
     watchlist_data = []
 
