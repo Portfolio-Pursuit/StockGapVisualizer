@@ -14,7 +14,7 @@ from papertrades.papertrades import paper_trading_blueprint
 # Register blueprints with the app
 app.register_blueprint(login_blueprint, url_prefix='/login')
 app.register_blueprint(dashboard_blueprint, url_prefix='/dashboard')
-app.register_blueprint(paper_trading_blueprint, url_prefix='/papertrading')
+app.register_blueprint(paper_trading_blueprint, url_prefix='/portfolio')
 app.register_blueprint(chart_blueprint, url_prefix='/chart')
 app.register_blueprint(heatmap_blueprint, url_prefix='/heatmap')
 app.register_blueprint(logout_blueprint, url_prefix='/logout')

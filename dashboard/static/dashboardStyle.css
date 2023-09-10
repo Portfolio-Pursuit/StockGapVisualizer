@@ -53,3 +53,7 @@ body {
     height: 20px; /* Adjust the height to control the spacing */
 }
 
+.center {
+    text-align: center;
+}
+
