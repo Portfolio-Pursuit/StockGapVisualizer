@@ -1,39 +1,60 @@
-# dashboard.watchlist.py
-
+# Import necessary modules
 import yfinance as yf
+from flask import Blueprint, render_template, request, redirect, url_for
 from common.auth.login_required import login_required
+from common.application.application import db
 from common.market.data.stocks import current_price
-from flask import Blueprint, Flask, request
-from common.ui.navbar import navbar, getUIDir
 
-renderEnv = navbar(getUIDir(__file__)).getEnv()
+# Import the Watchlist model from your watchlist_models module
+from dashboard.models.watchlist_models import Watchlist  # Adjust the import path as needed
 
+# Create a Blueprint for the watchlist
 watchlist_blueprint = Blueprint('watchlist_temp', __name__, url_prefix= '/watchlist', static_folder='static', static_url_path='assets')
-local_template = 'watchlist.html'
 
 # Sample stocks for the watchlist
 watchlist_stocks = ["AAPL", "GOOGL", "TSLA", "MSFT", "AMZN"]
 
-@watchlist_blueprint.route('/', methods=['GET', 'POST'])
-@login_required
-def watchlist():
-    global watchlist_stocks
-    watchlist_data = []
+# Route for displaying the watchlist
+@watchlist_blueprint.route('/watchlist')
+@login_required  
+def display_watchlist():
+    # Query the user's watchlist from the database (example query)
+    user_watchlist = Watchlist.query.filter_by(user_id=current_user.id).all()
 
-    # if request.method == 'POST':
-    #     new_stock_symbol = request.form.get('newStockSymbol')
-    #     if new_stock_symbol:
-    #         try:
-    #             stock_info = yf.Ticker(new_stock_symbol)
-    #             data = stock_info.history(period="1d")  # Fetch today's data for demonstration
-    #             if not data.empty:
-    #                 watchlist_stocks.append(new_stock_symbol)
-    #         except Exception as e:
-    #             print(f"Error adding new stock {new_stock_symbol}: {str(e)}")
+     # Create a list of stock symbols from the user's watchlist
+    watchlist_stocks = [item.asset for item in user_watchlist]
+
+    watchlist_data = []
 
     for ticker in watchlist_stocks:
         watchlist_data.append({
             "ticker": ticker,
             "current_price": current_price(ticker),
         })
-    return renderEnv.get_template(local_template).render(watchlist_data=watchlist_data)
+
+    return render_template('watchlist.html', watchlist_data=watchlist_data)
+
+# Route for adding a new stock to the watchlist
+@watchlist_blueprint.route('/add_stock', methods=['POST'])
+@login_required
+def add_stock():
+    new_stock_symbol = request.form.get('newStockSymbol')
+    
+    if new_stock_symbol:
+        try:
+            stock_info = yf.Ticker(new_stock_symbol)
+            data = stock_info.history(period="1d")  # Fetch today's data for demonstration
+            if not data.empty:
+                # Create a new Watchlist item for the user
+                new_watchlist_item = Watchlist(user_id=current_user.id, asset=new_stock_symbol)
+                db.session.add(new_watchlist_item)
+                db.session.commit()
+
+                # Fetch the current price and update the new_watchlist_item
+                new_watchlist_item.current_price = current_price(new_stock_symbol)
+                db.session.commit()
+        except Exception as e:
+            print(f"Error adding new stock {new_stock_symbol}: {str(e)}")
+
+    return redirect(url_for('watchlist.display_watchlist'))
+
