@@ -11,6 +11,7 @@ app.secret_key = 'your_secret_key_here'  # Replace with a strong secret key
 
 # Initialize the database
 db = SQLAlchemy(app)
+db.url = Config.SQLALCHEMY_DATABASE_URI
 
 login_manager = LoginManager()
 login_manager.init_app(app)
