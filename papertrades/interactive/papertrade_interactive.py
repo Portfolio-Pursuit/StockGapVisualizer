@@ -11,12 +11,14 @@ import locale
 from common.market.data.stocks import get_sp500_symbols
 from common.ui.navbar import navbar, getUIDir
 from flask_login import current_user
+from papertrades.papertrades import paper_trading_blueprint
 
 renderEnv = navbar(getUIDir(__file__)).getEnv()
 
 local_template = 'papertrades_interactive.html'
 paper_trading_interactive_blueprint = Blueprint('paper_trading_interactive', __name__,  template_folder='templates',
     static_folder='static', static_url_path='assets')
+paper_trading_interactive_blueprint.register_blueprint(paper_trading_blueprint, url_prefix='/local')
 
 locale.setlocale( locale.LC_ALL, '' )
 
