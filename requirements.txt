@@ -1,0 +1,10 @@
+Flask
+yfinance
+pandas
+plotly
+flask_sqlalchemy
+flask_login
+bcrypt
+alembic
+celery
+celery[beat]

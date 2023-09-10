@@ -1,9 +1,9 @@
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import pool, MetaData
 from common.application.config import Config
-
+from common.application.application import db
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -19,11 +19,11 @@ config.set_section_option(
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+# Create a metadata object
+metadata = MetaData()
+
+# Assign the metadata from your SQLAlchemy database object
+target_metadata = db.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

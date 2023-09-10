@@ -29,7 +29,7 @@ cd flask-stock-gap-visualizer
 2. Install the required dependencies using `pip`.
 
 ```bash
-pip install Flask yfinance pandas plotly flask_sqlalchemy flask_login bcrypt alembic
+pip install Flask yfinance pandas plotly flask_sqlalchemy flask_login bcrypt alembic celery celery\[beat\] 
 ```
 
 3. Run the Flask app.
@@ -83,11 +83,26 @@ information or instructions specific to your project that might be
 relevant.
 
 **Migration DB  steps:** 
-1/ alembic revision -m "create_users_table"
+0 / Automated step e.g.: alembic revision --autogenerate -m "Add leaderboard relationship to User model"
+1/ Only do if not doing step 0 skip to 3, Manual Steps: alembic revision -m "create_users_table"
     This will create a file like albemic/versions/1234567890_create_users_table.py.
 2/ edit albemic/versions/__generatedfile, def upgrade():, def downgrade():
 3/ apply migrations
 3a/ upgrade: alembic upgrade head
 3b/ downgrade: alembic downgrade -1
 4/ view history: alembic history
+```
+
+**Celery Cron Job steps:** 
+0/ brew install rabbitmq, rabbitmq-plugins enable rabbitmq_management, brew services start rabbitmq
+1/ Create celery task under celer/../name_of_task.py
+2/ Configure beat_schedule in common.application.config.py
+3/ Start: celery beat
+4/ Start Celery worker(s): celery worker --loglevel=info
+```
+
+** Docker steps:** 
+0/ brew install docker && install docker desktop
+1/ docker-compose build && docker-compose up
+
 ```

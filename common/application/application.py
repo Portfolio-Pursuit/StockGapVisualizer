@@ -16,7 +16,11 @@ db.url = Config.SQLALCHEMY_DATABASE_URI
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+from common.application.celeryconfig import *
+celery = make_celery(app)
+
 from papertrades.interactive.models.currency_interactive import *
+from papertrades.interactive.models.leaderboard_interactive import *
 from papertrades.interactive.models.papertrade_interactive import *
 from papertrades.models.papertrades import *
 from login.models.user import *
