@@ -8,5 +8,5 @@ class User(db.Model, UserMixin):
     paper_trades = db.relationship('PaperTrade', backref='owner', viewonly=True)
     paper_trades_interactive = db.relationship('PaperTradeInteractive', backref='owner', viewonly=True)
     currency_interactive = db.relationship('CurrencyInteractive', backref='owner', viewonly=True)
-    watchlist = db.relationship('Watchlist,', backref = 'owner', viewonly = True )
+    watchlist = db.relationship('Watchlist', backref='owner', viewonly=True)
     weekly_leaderboards = db.relationship('WeeklyLeaderboard', backref='owner', viewonly=True)
