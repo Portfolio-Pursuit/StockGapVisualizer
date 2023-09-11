@@ -26,7 +26,7 @@ def display_watchlist():
     # Query the user's watchlist from the database (example query)
     user_watchlist = Watchlist.query.filter_by(user_id=current_user.id).all()
 
-    # Create a list of stock symbols from the user's watchlist
+    # Create a list of stock symbols from the user's watchlist otherwise show defaults
     watchlist_stocks_saved = [item.asset for item in user_watchlist]
     if watchlist_stocks_saved and len(watchlist_stocks_saved) > 0:
         watchlist_stocks = watchlist_stocks_saved
