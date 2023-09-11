@@ -2,16 +2,32 @@ version: "3"
 services:
   web:
     build: .
+    environment:
+      - DOCKER_CONTAINER=true
     ports:
       - "8000:8000"  # Expose your Flask app's port
+    volumes:
+      - ./data:/app/data
     depends_on:
       - rabbitmq  # Ensure that RabbitMQ is ready before starting the application
 
   celery-beat:
     build: .
-    command: celery beat
+    command: sh -c "sleep 5 && celery -A common.application.application.celery beat --loglevel=info"
     depends_on:
-      - web  # Ensure that the web service is running before starting Celery Beat
+      - web 
+
+  celery-beat-worker:
+    build: .
+    command: sh -c "sleep 10 && celery -A common.application.application.celery worker --loglevel=info -E"
+    depends_on:
+      - web
+
+  celery-worker-sequential:
+    build: .
+    command: sh -c "sleep 10 && celery -A common.application.application.celery worker --loglevel=info -E -Q sequential_queue -c 1" 
+    depends_on:
+      - web
 
   rabbitmq:
     image: "rabbitmq:management"

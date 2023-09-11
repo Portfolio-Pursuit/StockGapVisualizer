@@ -29,7 +29,7 @@ cd flask-stock-gap-visualizer
 2. Install the required dependencies using `pip`.
 
 ```bash
-pip install Flask yfinance pandas plotly flask_sqlalchemy flask_login bcrypt alembic celery celery\[beat\] 
+pip install Flask yfinance pandas plotly flask_sqlalchemy flask_login bcrypt alembic celery celery\[beat\] redis
 ```
 
 3. Run the Flask app.
@@ -103,6 +103,8 @@ relevant.
 
 ** Docker steps:** 
 0/ brew install docker && install docker desktop
-1/ docker-compose build && docker-compose up
+1/ docker-compose up --build
+1b/ docker-compose up (if no need to build)
+2/ To stop gracefully: docker-compose down 
 
 ```

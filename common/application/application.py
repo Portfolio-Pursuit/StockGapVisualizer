@@ -10,7 +10,7 @@ app.config.from_object(Config)
 app.secret_key = 'your_secret_key_here'  # Replace with a strong secret key
 
 # Initialize the database
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 db.url = Config.SQLALCHEMY_DATABASE_URI
 
 login_manager = LoginManager()
@@ -26,4 +26,5 @@ from papertrades.models.papertrades import *
 from login.models.user import *
 
 with app.app_context():
+    db.init_app(app)
     db.create_all()
