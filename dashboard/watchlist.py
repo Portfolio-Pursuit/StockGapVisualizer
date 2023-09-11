@@ -11,7 +11,7 @@ from flask_login import current_user
 from dashboard.models.watchlist_models import Watchlist  # Adjust the import path as needed
 
 # Create a Blueprint for the watchlist
-watchlist_blueprint = Blueprint('watchlist_temp', __name__, static_folder='static', static_url_path='assets')
+watchlist_blueprint = Blueprint('watchlist', __name__, static_folder='static', static_url_path='assets')
 
 renderEnv = navbar(getUIDir(__file__)).getEnv()
 local_template = 'watchlist.html'
@@ -26,8 +26,10 @@ def display_watchlist():
     # Query the user's watchlist from the database (example query)
     user_watchlist = Watchlist.query.filter_by(user_id=current_user.id).all()
 
-     # Create a list of stock symbols from the user's watchlist
-    watchlist_stocks = [item.asset for item in user_watchlist]
+    # Create a list of stock symbols from the user's watchlist
+    watchlist_stocks_saved = [item.asset for item in user_watchlist]
+    if watchlist_stocks_saved and len(watchlist_stocks_saved) > 0:
+        watchlist_stocks = watchlist_stocks_saved
 
     watchlist_data = []
 
@@ -37,7 +39,7 @@ def display_watchlist():
             "current_price": current_price(ticker),
         })
 
-    return renderEnv.get_template(local_template).render()
+    return renderEnv.get_template(local_template).render(watchlist_data=watchlist_data)
 
 # Route for adding a new stock to the watchlist
 @watchlist_blueprint.route('/add_stock', methods=['POST'])

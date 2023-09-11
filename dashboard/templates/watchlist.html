@@ -5,7 +5,7 @@
 <body>
     <h1>My Watchlist</h1>
 
-    <form method="POST" action="/watchlist">
+    <form method="POST" action="{{ url_for('watchlist.add_stock') }}">
         <label for="newStockSymbol">Add Stock Symbol:</label>
         <input type="text" id="newStockSymbol" name="newStockSymbol" placeholder="Enter stock symbol">
         <button type="submit">Add</button>
