@@ -1,0 +1,20 @@
+version: "3"
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"  # Expose your Flask app's port
+    depends_on:
+      - rabbitmq  # Ensure that RabbitMQ is ready before starting the application
+
+  celery-beat:
+    build: .
+    command: celery beat
+    depends_on:
+      - web  # Ensure that the web service is running before starting Celery Beat
+
+  rabbitmq:
+    image: "rabbitmq:management"
+    ports:
+      - "5672:5672"  # AMQP port
+      - "15672:15672"  # RabbitMQ Management UI port

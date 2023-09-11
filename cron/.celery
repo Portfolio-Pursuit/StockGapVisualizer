@@ -1,0 +1,9 @@
+# celery.celery configuration file
+
+# Define the Celery broker URL (e.g., Redis)
+broker_url = 'redis://localhost:6379/0'
+
+# Define the Celery result backend (e.g., Redis)
+result_backend = 'redis://localhost:6379/0'
+
+# Other Celery configuration options can be added here
