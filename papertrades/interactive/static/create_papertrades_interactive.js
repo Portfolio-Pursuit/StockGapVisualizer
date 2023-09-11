@@ -62,7 +62,7 @@ function createPaperTrade() {
     const entryPrice = document.getElementById('entry_price').value;
 
     // Make an AJAX request to the create_paper_trade endpoint
-    fetch('/papertrading/interactive/new', {
+    fetch('/portfolio/new', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ function createPaperTrade() {
 
 function updateStockDataForTrade(tradeId) {
     // Make an AJAX request to get updated stock data for the trade
-    fetch(`/papertrading/interactive/get_stock_data/${tradeId}`)
+    fetch(`/portfolio/get_stock_data/${tradeId}`)
         .then(response => response.json())
         .then(data => {
              // Update the current_stock_data object in the HTML template with the fetched data
