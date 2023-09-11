@@ -3,6 +3,13 @@
 {% set active_item = 'watchlist' %}
 {% include 'navbar.html' %}
 <body>
+    <script src="{{ url_for('watchlist.static', filename='watchlistscripts.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('watchlist.static', filename='watchliststyles.css') }}">
+
+    <script>
+        var sp500 = {{ sp500_symbols | tojson | safe }};
+    </script>
+
     <h1>My Watchlist</h1>
 
     <form method="POST" action="{{ url_for('watchlist.add_stock') }}">
@@ -26,6 +33,8 @@
         {% endfor %}
     </ul>
 
-    <!-- Include any additional JavaScript for handling chart rendering or interactions -->
+    <!-- Include jQuery and jQuery UI scripts before your custom JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </body>
 </htm>
