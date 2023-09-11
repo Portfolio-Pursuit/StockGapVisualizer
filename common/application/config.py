@@ -12,9 +12,9 @@ class Config:
     else:
         SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'data/database.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        'echo': True,
-    }
+    # SQLALCHEMY_ENGINE_OPTIONS = {
+    #     'echo': True,
+    # }
      # RabbitMQ broker URL
     CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq:5672//'
     CELERY_RESULT_BACKEND = 'rpc://'

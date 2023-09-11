@@ -29,7 +29,7 @@ cd flask-stock-gap-visualizer
 2. Install the required dependencies using `pip`.
 
 ```bash
-pip install Flask yfinance pandas plotly flask_sqlalchemy flask_login bcrypt alembic celery celery\[beat\] redis
+pip install -r requirements.txt
 ```
 
 3. Run the Flask app.
