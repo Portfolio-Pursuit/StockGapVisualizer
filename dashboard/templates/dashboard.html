@@ -21,8 +21,8 @@
             <!-- Styled buttons for chart, heatmap, and watchlist -->
             <button onclick="location.href='{{ url_for('chart.chart') }}'" class="chart-button">Chart</button>
             <button onclick="location.href='{{ url_for('heatmap.heatmap') }}'" class="heatmap-button">Heatmap</button>
-            <button onclick="location.href='{{ url_for('watchlist_temp.watchlist') }}'" class="heatmap-button">Watchlist</button>
-            <button onclick="location.href='{{ url_for('paper_trading.list_paper_trades') }}'" class="heatmap-button">Paper Trading</button>
+            <button onclick="location.href='{{ url_for('watchlist_temp.display_watchlist') }}'" class="heatmap-button">Watchlist</button>
+            <button onclick="location.href='{{ url_for('paper_trading_interactive.list_paper_trades') }}'" class="heatmap-button">Paper Trading</button>
         </div>
         
         <!-- Add spacing between buttons and the logout section -->
