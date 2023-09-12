@@ -13,26 +13,5 @@ document.addEventListener("DOMContentLoaded", function () {
         },
       });
     });
-  
-    // Attach event listeners to the "Remove" buttons for each stock
-    $(document).on("click", ".removeButton", function () {
-      const symbol = $(this).data("symbol");
-  
-      if (symbol) {
-        // Send an AJAX request to remove the stock
-        $.ajax({
-          url: "/watchlist/delete_stock",
-          method: "POST",
-          data: { stockSymbol: symbol },
-          success: function () {
-            // Remove the stock's list item from the page
-            $(`li[data-symbol="${symbol}"]`).remove();
-          },
-          error: function (xhr, status, error) {
-            console.error(error);
-          },
-        });
-      }
-    });
   });
   
