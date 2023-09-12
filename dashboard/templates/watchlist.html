@@ -19,11 +19,13 @@
     </form>
 
     <ul>
+        <!-- function for creating watchlist items with delete buttons-->
         {% for stock in watchlist_data %}
         <li>
             <a href="/chart?symbol={{ stock.ticker }}">
                 {{ stock.ticker }} - {{ stock.stock_name }}
             </a>
+            <button type="button" onclick="removeStock('{{ stock.ticker }}')">Remove</button>
             <div class="mini-chart">
                 <!-- Render a mini chart for the stock here -->
                 <!-- You can use JavaScript or server-side rendering to generate the mini chart -->

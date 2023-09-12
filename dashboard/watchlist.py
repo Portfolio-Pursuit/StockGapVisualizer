@@ -67,3 +67,22 @@ def add_stock():
 
     return redirect(url_for('watchlist.display_watchlist'))
 
+
+# add code for deleting watchlist item from your watchlist
+@watchlist_blueprint.route('/delete_stock', methods=['POST'])
+@login_required
+def delete_stock():
+    stock_symbol = request.form.get('stockSymbol')
+    
+    if stock_symbol:
+        try:
+            # Delete the Watchlist item for the user
+            Watchlist.query.filter_by(user_id=current_user.id, asset=stock_symbol).delete()
+            db.session.commit()
+        except Exception as e:
+            print(f"Error deleting stock {stock_symbol}: {str(e)}")
+
+    return redirect(url_for('watchlist.display_watchlist'))
+
+
+
