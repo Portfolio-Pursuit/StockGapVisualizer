@@ -25,7 +25,7 @@
             <a href="/chart?symbol={{ stock.ticker }}">
                 {{ stock.ticker }} - {{ stock.stock_name }}
             </a>
-            <button type="button" onclick="removeStock('{{ stock.ticker }}')">Remove</button>
+            <button type="button" onclick="deleteStock('{{ stock.ticker }}')">Remove</button>
             <div class="mini-chart">
                 <!-- Render a mini chart for the stock here -->
                 <!-- You can use JavaScript or server-side rendering to generate the mini chart -->
@@ -38,5 +38,27 @@
     <!-- Include jQuery and jQuery UI scripts before your custom JavaScript -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+     <!-- Define a JavaScript function to call delete_stock function -->
+    <script>
+        function deleteStock(stockTicker) {
+            // Send an AJAX request to delete the stock
+            $.ajax({
+                type: "POST",
+                url: "/watchlist/delete_stock",  // Update this URL based on your Flask route
+                data: { stockSymbol: stockTicker },
+                success: function(response) {
+                    // If the removal is successful, reload the page to update the watchlist
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error removing stock:", error);
+                    // Handle the error as needed
+                }
+            });
+        }
+    </script>
+</body>
+</html>
 </body>
 </htm>
