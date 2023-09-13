@@ -3,7 +3,7 @@ import yfinance as yf
 from flask import Blueprint, render_template, request, redirect, url_for
 from common.auth.login_required import login_required
 from common.application.application import db
-from common.market.data.stocks import current_price
+from common.market.data.stocks import get_current_price
 from common.ui.navbar import navbar, getUIDir
 from flask_login import current_user
 from common.market.data.stocks import get_sp500_symbols
@@ -38,7 +38,7 @@ def display_watchlist():
     for ticker in watchlist_stocks:
         watchlist_data.append({
             "ticker": ticker,
-            "current_price": current_price(ticker),
+            "current_price": get_current_price(ticker),
         })
 
     return renderEnv.get_template(local_template).render(watchlist_data=watchlist_data, sp500_symbols=get_sp500_symbols())
@@ -60,7 +60,7 @@ def add_stock():
                 db.session.commit()
 
                 # Fetch the current price and update the new_watchlist_item
-                new_watchlist_item.current_price = current_price(new_stock_symbol)
+                new_watchlist_item.current_price = get_current_price(new_stock_symbol)
                 db.session.commit()
         except Exception as e:
             print(f"Error adding new stock {new_stock_symbol}: {str(e)}")

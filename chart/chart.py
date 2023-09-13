@@ -4,7 +4,7 @@ import yfinance as yf
 import plotly.graph_objs as go
 from common.auth.login_required import login_required
 from common.ui.navbar import navbar, getUIDir
-from common.market.data.stocks import current_price
+from common.market.data import stocks
 
 renderEnv = navbar(getUIDir(__file__)).getEnv()
 
@@ -20,7 +20,7 @@ def chart():
     symbol = request.args.get('symbol', 'Spy')
     target_price = request.form.get('target_price')
 
-    current_price_data = current_price(symbol)
+    current_price_data = stocks.get_current_price(symbol)
     target_price = current_price_data
 
     if target_price and target_price != "":
@@ -35,7 +35,7 @@ def chart():
 @login_required
 def get_current_price():
     symbol = request.args.get('symbol')
-    current_price = current_price(symbol)
+    current_price = stocks.get_current_price(symbol)
     current_price = round(current_price, 2) if current_price else "Unknown"
     return jsonify({"current_price": current_price})
 
