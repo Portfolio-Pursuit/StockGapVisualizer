@@ -12,7 +12,7 @@ local_template = 'dashboard.html'
 @dashboard_blueprint.route('/')
 @login_required
 def dashboard():
-    calculate_weekly_profits_task.delay()
-    calculate_weekly_profits_task.apply_async()
+    #calculate_weekly_profits_task.delay()
+    #calculate_weekly_profits_task.apply_async()
 
     return renderEnv.get_template(local_template).render()
