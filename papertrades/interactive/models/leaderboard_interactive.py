@@ -16,7 +16,7 @@ class WeeklyLeaderboard(db.Model):
         self.generate_slug(self)
 
     def generate_slug(self, arg):
-        if self.asset and self.timestamp:
+        if self.weekly_profit and self.week_start_date:
             self.slug = slugify(f"{self.weekly_profit} {self.week_start_date}")
         else:
             self.slug = str(int(time()))

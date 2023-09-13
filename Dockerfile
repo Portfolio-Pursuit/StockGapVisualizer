@@ -20,4 +20,4 @@ COPY . .
 EXPOSE 8000
 
 # Start the Flask application and Celery Beat
-CMD ["sh", "-c", "flask run --host=0.0.0.0 --port=8000 & celery beat"]
+CMD ["sh", "-c", "flask run --host=0.0.0.0 --port=8000 & celery beat --loglevel=INFO"]

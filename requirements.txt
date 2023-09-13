@@ -8,3 +8,5 @@ bcrypt
 alembic
 celery
 celery[beat]
+redis
+babel

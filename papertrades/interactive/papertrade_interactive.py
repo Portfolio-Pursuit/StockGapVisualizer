@@ -1,13 +1,13 @@
 # papertrades.interactive.papertrade_interactive.py
 
 from flask import Blueprint, request, jsonify
+from babel.numbers import format_currency
 from datetime import datetime
 from papertrades.interactive.models.papertrade_interactive import PaperTradeInteractive
 from papertrades.interactive.models.currency_interactive import CurrencyInteractive, initCurrency
 from common.application.application import db
 from common.auth.login_required import login_required
 import yfinance as yf
-import locale
 from common.market.data.stocks import get_sp500_symbols
 from common.ui.navbar import navbar, getUIDir
 from flask_login import current_user
@@ -19,8 +19,6 @@ local_template = 'papertrades_interactive.html'
 paper_trading_interactive_blueprint = Blueprint('paper_trading_interactive', __name__,  template_folder='templates',
     static_folder='static', static_url_path='assets')
 paper_trading_interactive_blueprint.register_blueprint(paper_trading_blueprint, url_prefix='/local')
-
-locale.setlocale( locale.LC_ALL, '' )
 
 @paper_trading_interactive_blueprint.route('/', methods=['GET'])
 @login_required
@@ -178,7 +176,9 @@ def getTotalCurrency():
     return formatCurrency(currency)
 
 def formatCurrency(currency):
-    return locale.currency(currency, grouping=True)
+    currency = round(float(currency), 2)
+    formatted = format_currency(currency, 'USD', locale='en_US')
+    return formatted
 
 def getTotalCurrencyNoFormat():
     return CurrencyInteractive.query.filter_by(user_id=current_user.id).first().total_currency

@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function removePaperTrade(tradeId) {
     // Make an AJAX request to the remove_paper_trade endpoint
-    fetch(`/papertrading/interactive/remove/${tradeId}`, {
+    fetch(`/portfolio/remove/${tradeId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
